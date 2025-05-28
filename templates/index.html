@@ -1,0 +1,613 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  {% load static %}
+
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>BusinessControl</title>
+<meta content="" name="description">
+<meta content="" name="keywords">
+<link href="{% static 'img/favicon.png' %}" rel="icon">
+<link href="{% static 'img/apple-touch-icon.png' %}" rel="apple-touch-icon">
+<link href="{% static 'vendor/aos/aos.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'vendor/bootstrap-icons/bootstrap-icons.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'vendor/boxicons/css/boxicons.min.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'vendor/glightbox/css/glightbox.min.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'vendor/swiper/swiper-bundle.min.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'css/style.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'css/tiempo.css' %}" rel="stylesheet" type="text/css">
+<link href="{% static 'css/registro.css' %}" rel="stylesheet" type="text/css">
+
+
+</head>
+
+<body>
+
+  <!-- ======= Top Bar ======= -->
+  <section id="topbar" class="d-flex align-items-center">
+    <div class="container d-flex justify-content-center justify-content-md-between">
+      <div class="contact-info d-flex align-items-center">
+        <i class="bi bi-envelope-fill"></i><a href="mailto:contact@example.com">jorge.ramos-s@uniminuto.edu.co</a>
+        <i class="bi bi-phone-fill phone-icon"></i> 310 251 3062 
+      </div>
+      <div class="social-links d-none d-md-block">
+        <a href="https://twitter.com/UNIMINUTOBOGOTA" class="twitter"><i class="bi bi-twitter"></i></a>
+        <a href="https://www.facebook.com/UNIMINUTOCOLOMBIA" class="facebook"><i class="bi bi-facebook"></i></a>
+        <a href="https://www.instagram.com/uniminutocol/" class="instagram"><i class="bi bi-instagram"></i></a>
+        <a href="https://www.linkedin.com/school/uniminutocol/?originalSubdomain=co" class="linkedin"><i class="bi bi-linkedin"></i></i></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ======= Header ======= -->
+  <header id="header" class="d-flex align-items-center">
+    <div class="container d-flex align-items-center justify-content-between">
+
+      <h1 class="logo"><a href="index.html">BusinessControl</a></h1>
+      
+      <nav id="navbar" class="navbar">
+        <ul>
+          <li><a class="nav-link scrollto active" href="#hero">Principal</a></li>
+          <li><a class="nav-link scrollto" href="#about">Nosotros</a></li>
+          <li><a class="nav-link scrollto" href="#services">Servicios</a></li>
+          <li><a class="nav-link scrollto" href="#pricing">Precios</a></li>
+          <li><a class="nav-link scrollto" href="#team">Equipo</a></li>
+          <li><a class="nav-link scrollto" href="#contact">Contacto</a></li>
+          <li><a class="nav-link scrollto" href="">Inicio de Sesion</a></li>
+        </ul>
+        <i class="bi bi-list mobile-nav-toggle"></i>
+      </nav><!-- .navbar -->
+
+    </div>
+  </header><!-- End Header -->
+
+  <!-- ======= Principal ======= -->
+  <section id="hero" class="d-flex align-items-center">
+    <div class="container position-relative" data-aos="fade-up" data-aos-delay="500">
+      <h1>BusinessControl</h1>
+      <h2>El mejor producto para administrar tu negocio</h2>
+      <a href="#about" class="btn-get-started scrollto">Comenzemos</a>
+    </div>
+  </section><!-- End Hero -->
+
+  <main id="main">
+
+    <!-- ======= Nosotros ======= -->
+    <section id="about" class="about">
+      <div class="container">
+
+        <div class="row">
+          <div class="col-lg-6 order-1 order-lg-2" data-aos="fade-left">
+            <img src="{% static 'img/portada3.png' %}" width="768" height="1024" class="img-fluid" alt="">
+          </div>
+          <div class="col-lg-6 pt-4 pt-lg-0 order-2 order-lg-1 content" data-aos="fade-right">
+            <h3>Software para negocios.</h3>
+            <p class="fst-italic">
+              Administra tu negocio con la tranquilidad ya que BusinessControl se encargara 
+              del procesamiento de informacion y organizacion de tu negocio
+            </p>
+            <ul>
+              <li><i class="bi bi-check-circle"></i> Control de inventario</li>
+              <li><i class="bi bi-check-circle"></i> Arqueo de caja</li>
+              <li><i class="bi bi-check-circle"></i> Asigna usuarios segun el rol </li>
+              <li><i class="bi bi-check-circle"></i> Control de proveedores </li>
+              <li><i class="bi bi-check-circle"></i> Control de gastos </li>
+              <li><i class="bi bi-check-circle"></i> Control de impresion </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section><!-- End About Section -->
+
+    <!-- ======= Informacion ======= -->
+    <section id="why-us" class="why-us">
+      <div class="container">
+
+        <div class="row">
+
+          <div class="col-lg-4" data-aos="fade-up">
+            <div class="box">
+              <span>01</span>
+              <h4>Eficiencia y velocidad</h4>
+              <p>Procesa transacciones de manera rapida y eficiente mediante la automatizacion 
+                 de procesos para la captura, almacenamiento y modificacion de datos.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 mt-4 mt-lg-0" data-aos="fade-up" data-aos-delay="150">
+            <div class="box">
+              <span>02</span>
+              <h4>Personalizacion</h4>
+              <p>Es adaptable y configurable a las necesidades del negocio al cual se desee 
+                 aplicar pues destaca como una solucion para la distribucion de articulos 
+                 generales o regulacion de informacion especifica
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 mt-4 mt-lg-0" data-aos="fade-up" data-aos-delay="300">
+            <div class="box">
+              <span>03</span>
+              <h4> Compatibilidad de hadware</h4>
+              <p>Nuestro aplicativo no requiere un hadware en especifico debido a que se 
+                 puede utilizar en cual quier tipo de dispositivo independientemente de 
+                 su marca o sistema operativo
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section><!-- End Why Us Section -->
+
+    <!-- ======= Services ======= -->
+    <section id="services" class="services">
+      <div class="container">
+        <div class="section-title">
+          <span>Caracteristicas</span>
+          <div class="col-lg-12 content" data-aos="fade-right"></div>
+          <h2>Caracteristicas</h2>
+          <div class="col-lg-12" data-aos="fade-up">
+            <div class="box">
+            <p>
+              El software integral de gestión empresarial que ofrecemos es una solución avanzada que revoluciona la manera en que las empresas gestionan sus operaciones. 
+              Con un enfoque centrado en potenciar las áreas de ventas, inventario y relaciones con clientes, este sistema innovador brinda a las organizaciones las herramientas 
+              necesarias para optimizar sus procesos y maximizar su rendimiento. Desde el seguimiento detallado de las transacciones de ventas hasta la gestión en tiempo real del inventario,
+              pasando por la segmentación inteligente de clientes para estrategias de marketing personalizadas, este software se erige como el compañero indispensable para el éxito empresarial.
+              Al permitir una visión panorámica de todas las operaciones, además de integrar potentes herramientas de análisis y seguimiento de tendencias, las empresas pueden tomar decisiones
+              informadas y proactivas, asegurando una ventaja competitiva en el mercado actual. En resumen, nuestro software no solo simplifica la gestión diaria, sino que también impulsa el 
+              crecimiento a través de una combinación única de control de procesos y estrategias de marketing inteligentes.
+            </p>
+            <p>Contamos con varias funcionalidades para un mayor rendimiento</p>
+          </div>
+        </div>
+      </div>
+          
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="fade-up">
+            <div class="icon-box">
+              <div class="icon"><i class="bx bxl-dribbble"></i></div>
+              <h4><a href="">Analisis</a></h4>
+              <p>Analítica y reportes a cerca de los 
+                 movimientos que puede tener el aplicativo
+                 al momento de ofrecer sus productos o abastecer
+                 sus inventarios
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-md-0" data-aos="fade-up" data-aos-delay="150">
+            <div class="icon-box">
+              <div class="icon"><i class="bx bx-file"></i></div>
+              <h4><a href="">Consulta</a></h4>
+              <p>Seguimiento de interacciones llevando a cabo encuestas 
+                 aleatorias de manera presencial donde se busque captar
+                 las opciones de mejora que podría tener
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4 mt-lg-0" data-aos="fade-up" data-aos-delay="300">
+            <div class="icon-box">
+              <div class="icon"><i class="bx bx-tachometer"></i></div>
+              <h4><a href="">Velocidad</a></h4>
+              <p>Prontitud en el procesamiento de transacciones y pedidos 
+                 como tambien en pagos de manera segura y rapida.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4" data-aos="fade-up" data-aos-delay="450">
+            <div class="icon-box">
+              <div class="icon"><i class="bx bx-world"></i></div>
+              <h4><a href="">Automatizacion</a></h4>
+              <p>Automatización de tareas también relacionado con el seguimiento
+                 de interacciones ya que nos permite llegar al público especifico
+                 en el momento adecuado.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4" data-aos="fade-up" data-aos-delay="600">
+            <div class="icon-box">
+              <div class="icon"><i class="bx bx-slideshow"></i></div>
+              <h4><a href="">Alianza</a></h4>
+              <p>Colaboración de tareas mediante la atención al cliente para gestionar
+                 dudas o consultas de los clientes relacionados con las ventas 
+                 o uso de la herramienta.
+              </p>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch mt-4" data-aos="fade-up" data-aos-delay="750">
+            <div class="icon-box">
+              <div class="icon"><i class="bx bx-arch"></i></div>
+              <h4><a href="">Eficiencia</a></h4>
+              <p>Optimizacion de datos mediante funciones integradas de manera rapida y 
+                 eficaz con la aplicacion de procesos para la reduccion de uso de recursos.
+              </p>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Services Section -->
+
+    <!-- ======= Informacion ======= -->
+    <section id="cta" class="cta">
+      <div class="container" data-aos="zoom-in">
+
+        <div class="text-center">
+          <h3>Alcance del sistema</h3>
+          <h5><p> Nuestro aplicativo proporciona una serie de herramientas y características que permitirán un 
+            control más eficiente y organizado de las operaciones, desde la administración del aplicativo hasta 
+            la gestión de servicios y la interacción con los clientes, el aplicativo se convertirá en la pieza 
+            clave paras los comerciantes al garantizar que todas las operaciones se lleven a cabo sin problemas.
+          </p></h5>
+        </div>
+
+      </div>
+    </section><!-- End Cta Section -->
+
+    <!-- ======= Precios ======= -->
+    <section id="pricing" class="pricing">
+      <div class="container">
+
+        <div class="section-title">
+          <span>Precios</span>
+          <h2>Precios</h2>
+          <p>Disponemos de diferentes versiones</p>
+        </div>
+
+        <div class="row">
+
+          <div class="col-lg-4 col-md-6" data-aos="zoom-in" data-aos-delay="150">
+            <div class="box">
+              <h3>Gratis</h3>
+              <h4><sup>$</sup>0<span> / Mes</span></h4>
+              <ul>
+                <li>Ingreso</li>
+                <li>Ventas</li>
+                <li class="na">Productos</li>
+                <li class="na">Control de inventario</li>
+                <li class="na">Creacion de usuarios</li>
+                <li class="na">Arqueo de caja</li>
+                <li class="na">Control de impresion</li>
+              </ul>
+              <div class="btn-wrap">
+                <a href="#" class="btn-buy">Adquirir</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 mt-4 mt-md-0" data-aos="zoom-in">
+            <div class="box featured">
+              <h3>Business</h3>
+              <h4><sup>$</sup>90.000<span> / Mes</span></h4>
+              <ul>
+                <li>Ingreso</li>
+                <li>Ventas</li>
+                <li >Productos</li>
+                <li >Control de inventario</li>
+                <li >Creacion de usuarios</li>
+                <li class="na">Arqueo de caja</li>
+                <li class="na">Control de impresion</li>
+              </ul>
+              <div class="btn-wrap">
+                <a href="#" class="btn-buy">Adquirir</a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 mt-4 mt-lg-0" data-aos="zoom-in" data-aos-delay="150">
+            <div class="box">
+              <h3>Developer</h3>
+              <h4><sup>$</sup>140.000<span> / Mes</span></h4>
+              <ul>
+                <li>Ingreso</li>
+                <li>Ventas</li>
+                <li >Productos</li>
+                <li >Control de inventario</li>
+                <li >Creacion de usuarios</li>
+                <li >Arqueo de caja</li>
+                <li >Control de impresion</li>
+                <li >Facturacions</li>
+              </ul>
+              <div class="btn-wrap">
+                <a href="#" class="btn-buy">Adquirir</a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ======= Equipo ======= -->
+    <section id="team" class="team">
+      <div class="container">
+
+        <div class="section-title">
+          <span>Equipo</span>
+          <h2>Equipo</h2>
+          <p>Equipo de Desarrollo.</p>
+        </div>
+
+        <div class="row">
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
+            <div class="member">
+              <img src="{% static 'img/jorge.png' %}" alt="">
+              <h4>Jorge Ramos</h4>
+              <span>DBA</span>
+              <p>
+                Administrador de la base de datos
+              </p>
+              <div class="social">
+                <a href="https://www.facebook.com/jorge.l.ramos.71"><i class="bi bi-facebook"></i></a>
+                <a href="https://www.instagram.com/comcorjorge/"><i class="bi bi-instagram"></i></a>
+                <a href="https://www.linkedin.com/in/jorge-luis-ramos-002b83285/"><i class="bi bi-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
+            <div class="member">
+              <img src="{% static 'img/team/team-2.png' %}" alt="">
+              <h4>Sarah Jhinson</h4>
+              <span>Product Manager</span>
+              <p>
+                 Aqui info
+              </p>
+              <div class="social">
+                <a href=""><i class="bi bi-twitter"></i></a>
+                <a href=""><i class="bi bi-facebook"></i></a>
+                <a href=""><i class="bi bi-instagram"></i></a>
+                <a href=""><i class="bi bi-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-4 col-md-6 d-flex align-items-stretch" data-aos="zoom-in">
+            <div class="member">
+              <img src="{% static 'img/team/team-3.jpg' %}" alt="">
+              <h4>William Anderson</h4>
+              <span>CTO</span>
+              <p>
+                Aqui info
+              </p>
+              <div class="social">
+                <a href=""><i class="bi bi-twitter"></i></a>
+                <a href=""><i class="bi bi-facebook"></i></a>
+                <a href=""><i class="bi bi-instagram"></i></a>
+                <a href=""><i class="bi bi-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+    </section><!-- End Team Section -->
+
+    <!-- ======= Contact ======= -->
+    <section id="contact" class="contact">
+      <div class="container">
+
+        <div class="section-title">
+          <span>Contacto</span>
+          <h2>Contacto</h2>
+          <p>Contamos con los siguientes canales de contacto</p>
+        </div>
+
+        <div class="row" data-aos="fade-up">
+          <div class="col-lg-6">
+            <div class="info-box mb-4">
+              <i class="bx bx-map"></i>
+              <h3>Ubicación</h3>
+              <p>Diagonal 81f #72c1, Bogota Dc</p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="info-box  mb-4">
+              <i class="bx bx-envelope"></i>
+              <h3>Email</h3>
+              <p>jorge.ramos-s@uniminuto.edu.co</p>
+            </div>
+          </div>
+
+          <div class="col-lg-3 col-md-6">
+            <div class="info-box  mb-4">
+              <i class="bx bx-phone-call"></i>
+              <h3>Contacto</h3>
+              <p>+57 3102513062</p>
+            </div>
+          </div>
+
+        </div>
+
+        <div class="row" data-aos="fade-up">
+
+          <div class="col-lg-7 ">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3976.4122018429757!2d-74.09157818856525!3d4.6982300416574665!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e3f9b31ce6d5835%3A0x3b5b6f123d35a1e3!2sUniminuto%20Calle%2080%20Sede%20Principal!5e0!3m2!1ses-419!2sco!4v1692561463853!5m2!1ses-419!2sco" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>            
+          </div>
+
+          <div class="col-lg-4">
+            <form class="form" action="/accesos" method="post" role="form" name="recipient">
+              <p class="title">Registro </p>
+                  <div class="flex">
+                  <label>
+                      <input type="text" placeholder="Nombre"  class="input" name="nombreempleado" id="nombre" required>
+                <!--  <input type="text" placeholder="Nombre" class="form-control" name="nombreempleado"  id="nombre"  required> -->
+                  </label>
+          
+                  <label>
+                      <input type="text" name="apellido" class="input" id="apellido" placeholder="Apellido" required>
+                 <!-- <input type="text" name="apellido" class="form-control" id="apellido" placeholder="Apellido" required> -->
+                  </label>
+              </div>  
+                      
+              <label>
+                      <input type="email" class="input" name="correo" id="correo"placeholder="Correo" required>
+                <!--  <input type="email" class="form-control" name="correo" id="correo" placeholder="Correo" required> -->
+              </label> 
+                  
+              <label>
+                      <input type="text" class="input" name="usuario" id="usuario" placeholder="Nombre de usuario">
+                <!--  <input type="text" class="form-control" name="usuario" id="usuario" placeholder="Nombre de usuario"> -->
+              </label>
+          
+                      <div class="col-md-6 form-group mt-3">
+                      <input type="text" class="form-control" name="cargo" id="cargo" placeholder="Cargo" required value="administrador" hidden> 
+                      </div>
+
+              <button class="submit">Solicitar</button>
+              <p class="signin">Ya tiene una cuenta ? <a href="/login">Inicio de Sesión</a> </p>
+          </form>
+          </div>
+        </div>
+
+      </div>
+    </section><!-- End Contact Section -->
+
+  </main><!-- End #main -->
+
+  <!-- ======= Footer ======= -->
+  <footer id="footer">
+    <div class="footer-top">
+      <div class="container">
+        <div class="row">
+
+          <div class="col-lg-4 col-md-6">
+            <div class="footer-info">
+              <h3>BusinessControl</h3>
+              <p>
+                Cra. 74 #81 C-05 <br>
+                Colombia, Bogotá<br><br>
+                <strong>Phone:</strong> +57 320-844-10-374<br>
+                <strong>Email:</strong> jorge.ramos-s@uniminuto.edu.co<br>
+                <strong>Email:</strong> miguel.rodriguez@uniminuto.edu.co<br>
+                <strong>Email:</strong> daniel.bernal-co@uniminuto.edu.co<br>
+              </p>
+              <div class="social-links mt-3">
+                <a href="#" class="twitter"><i class="bx bxl-twitter"></i></a>
+                <a href="#" class="facebook"><i class="bx bxl-facebook"></i></a>
+                <a href="#" class="instagram"><i class="bx bxl-instagram"></i></a>
+                <a href="#" class="google-plus"><i class="bx bxl-skype"></i></a>
+                <a href="#" class="linkedin"><i class="bx bxl-linkedin"></i></a>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-lg-2 col-md-6 footer-links">
+            <h4>Navegación</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Principal</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Nosotros</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Servicios</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Terminos</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Politica de privacidad</a></li>
+            </ul>
+          </div>
+
+          <div class="col-lg-2 col-md-6 footer-links">
+            <h4>Nuestros Servicios</h4>
+            <ul>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Design</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Web Development</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Product Management</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Marketing</a></li>
+              <li><i class="bx bx-chevron-right"></i> <a href="#">Graphic Design</a></li>
+            </ul>
+          </div>
+          <div class="col-lg-2 col-md-6 footer-link">
+            <h4>Acerca de Nosotros</h4>
+            <p><h6>
+              El propósito general de nuestro aplicativo es facilitar las ventas, 
+              seguimiento y gestión post venta con el objetivo de aumentar los 
+              ingresos de los negocios así como también su rentabilidad, fue 
+              diseñado para automatizar y mejorar los procesos que llevan a 
+              cabo durante la gestión administrativa en general de los productos 
+              que se manejen.
+            </h6></p>
+          </div>
+
+          <div class="col-lg-2 col-md-6">
+            <div class="cardContainer">
+              <div class="card">
+                <p class="city">Colombia</p>
+                <p class="weather">Bogotá</p>
+                <svg
+                  class="weather"
+                  version="1.1"
+                  id="Layer_1"
+                  x="0px"
+                  y="0px"
+                  width="50px"
+                  height="50px"
+                  viewBox="0 0 100 100"
+                  xml:space="preserve"
+                >
+                  <!-- Aca se remplaza dependiendo del clima que este, nublado, llovia, sol, entre otros -->
+                  <image
+                  id="image0"
+                  width="100"
+                  height="100"
+                  x="0"
+                  y="0"
+                  href="data:image/png;base64,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"
+                ></image>
+                </svg>
+                <p class="temp">32°</p>
+                <div class="minmaxContainer">
+                  <div class="min">
+                    <p class="minHeading">Min</p>
+                    <p class="minTemp">30°</p>
+                  </div>
+                  <div class="max">
+                    <p class="maxHeading">Max</p>
+                    <p class="maxTemp">32°</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <div class="copyright">
+        &copy; Copyright <strong><span>BusinessControl</span></strong>. All Rights Reserved
+      </div>
+      <div class="credits">
+        Designed by <a href="https://bootstrapmade.com/">BusinessControl</a>
+      </div>
+    </div>
+  </footer>
+
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <div id="preloader"></div>
+
+ 
+
+<script src="{% static 'vendor/aos/aos.js' %}"></script>
+<script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+<script src="{% static 'vendor/glightbox/js/glightbox.min.js' %}"></script>
+<script src="{% static 'vendor/isotope-layout/isotope.pkgd.min.js' %}"></script>
+<script src="{% static 'vendor/swiper/swiper-bundle.min.js' %}"></script>
+<script src="{% static 'vendor/php-email-form/validate.js' %}"></script>
+<script src="{% static 'js/main.js' %}"></script>
+
+</body>
+
+</body>
+
+</html>

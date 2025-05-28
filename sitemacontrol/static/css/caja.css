@@ -1,0 +1,160 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    text-decoration: none;
+    list-style: none;
+}
+
+:root {
+    --black: rgb(36, 34, 34);
+    --red: rgb(99, 7, 7);
+    --text: red;
+    --violet: hsl(272, 92%, 32%);
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+.contenedor-form {
+    display: flex;
+    justify-content: space-between;
+}
+
+.table-section {
+    width: 48%; /* Ajusta el ancho para dejar espacio entre las tablas */
+}
+
+
+.form-section {
+    width: 100%;
+    min-width: 300px;
+    margin-bottom: 20px;
+}
+
+.titulo {
+    text-align: center;
+    font-size: xx-large;
+    margin-bottom: 10px;
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.table th,
+.table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: center;
+}
+
+.table th {
+    background-color: #5a1212;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.table tr:hover {
+    background-color: #e6e6e6;
+}
+
+.input-form {
+    margin-bottom: 20px;
+}
+
+.input-form label {
+    display: block;
+    margin-bottom: 5px;
+    color: #333;
+    font-weight: 500;
+}
+
+.input-form input[type="number"],
+.input-form input[type="text"],
+.input-form input[type="password"],
+.input-form input[type="datetime-local"] {
+    width: calc(100% - 80%);
+    padding: 5px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    font-size: 15px;
+}
+
+.btn {
+    background-color: #5a1212;
+    color: #fff;
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    text-transform: uppercase;
+    transition: background-color 0.3s;
+}
+
+.btn:hover {
+    background-color: #8b0202;
+}
+
+@media (min-width: 768px) {
+    .container-form {
+        justify-content: space-between;
+    }
+
+    .table-section,
+    .form-section {
+        width: 48%;
+    }
+
+    .table-section {
+        order: 1;
+    }
+
+    .form-section {
+        order: 2;
+    }
+}
+
+#tablaCarrito {
+    max-height: 690px; /* Establece la altura máxima para mostrar la barra de desplazamiento */
+    overflow-y: auto; /* Agrega una barra de desplazamiento vertical cuando los datos superen la altura */
+}
+
+#tablaproducto {
+    max-height: 690px; /* Establece la altura máxima para mostrar la barra de desplazamiento */
+    overflow-y: auto; /* Agrega una barra de desplazamiento vertical cuando los datos superen la altura */
+}
+
+.input-form select {
+    font-size: 16px; /* Cambia el tamaño de la fuente */
+    padding: 8px; /* Añade espacio interno alrededor del texto dentro del select */
+    border: 1px solid #ccc; /* Añade un borde */
+    border-radius: 4px; /* Redondea las esquinas del select */
+    background-color: #fff; /* Establece un color de fondo */
+    width: 100%; /* Opcional: ajusta el ancho del select */
+}
+
+.input-form select {
+    font-size: 16px; /* Cambia el tamaño de la fuente */
+    padding: 8px; /* Añade espacio interno alrededor del texto dentro del select */
+    border: 1px solid #ccc; /* Añade un borde */
+    border-radius: 4px; /* Redondea las esquinas del select */
+    background-color: #fff; /* Establece un color de fondo */
+    width: 100%; /* Opcional: ajusta el ancho del select */
+}
+
+.clienteselec{
+    font-size: 16px; /* Cambia el tamaño de la fuente */
+    padding: 8px; /* Añade espacio interno alrededor del texto dentro del select */
+    border: 1px solid #ccc; /* Añade un borde */
+    border-radius: 4px; /* Redondea las esquinas del select */
+    background-color: #fff; /* Establece un color de fondo */
+    width: 40%; /* Opcional: ajusta el ancho del select */
+}

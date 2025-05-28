@@ -1,0 +1,5 @@
+/* Estilos para el elemento nav */
+nav.navbar {
+    margin: 0; /* Quita todos los márgenes */
+    padding: 0; /* Quita el relleno para que no haya espacio adicional */
+}

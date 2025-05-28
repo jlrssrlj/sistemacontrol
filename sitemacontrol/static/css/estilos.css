@@ -1,0 +1,98 @@
+/* Estilos para las tablas y los divs */
+.container-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin-top: 50px;
+}
+
+.table-section {
+  width: 80%;
+}
+
+.titulo {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #333;
+  font-size: 24px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 20px;
+}
+
+.table th,
+.table td {
+  border: 1px solid #ddd;
+  padding: 12px;
+  text-align: center;
+}
+
+.table th {
+  background-color: #2a9d8f;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.table tr:nth-child(even) {
+  background-color: #f2f2f2;
+}
+
+.table tr:hover {
+  background-color: #e6e6e6;
+}
+
+.contenedor-form {
+  width: 80%;
+  margin-top: 50px;
+}
+
+.card {
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  padding: 20px;
+}
+
+.input-form {
+  margin-bottom: 20px;
+}
+
+.input-form label {
+  display: block;
+  margin-bottom: 5px;
+  color: #333;
+  font-weight: 500;
+}
+
+.input-form input[type="number"],
+.input-form input[type="text"],
+.input-form input[type="datetime-local"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+.btn {
+  background-color: #2a9d8f;
+  color: #fff;
+  padding: 12px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-transform: uppercase;
+  transition: background-color 0.3s;
+}
+
+.btn:hover {
+  background-color: #21867a;
+}
