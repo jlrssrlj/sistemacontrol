@@ -1,23 +1,139 @@
 {% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <title>Ventas</title>
-    <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.min.css' %}">
-</head>
-<body class="bg-light py-5">
 
-<div class="container text-center">
-    <h2 class="mb-4 text-primary">Ventas</h2>
+{% block title %}Registrar Venta{% endblock %}
 
-    <a href="{% url 'logout' %}" class="btn btn-outline-danger">
-        <i class="bi bi-box-arrow-right me-1"></i> Cerrar sesión
-    </a>
+{% block content %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<div class="container-fluid my-4">
+    <div class="row">
+        <!-- Columna izquierda: Productos -->
+        <div class="col-md-8">
+            <h2 class="mb-3">Productos</h2>
+            <div class="row g-3">
+                {% for producto in productos %}
+                <div class="col-6 col-sm-4 col-md-3">
+                    <div class="card h-100 shadow-sm" 
+                         data-id="{{ producto.id }}" 
+                         data-nombre="{{ producto.nombre }}" 
+                         data-precio="{{ producto.precio }}">
+                        <div class="card-body d-flex flex-column align-items-center justify-content-center text-center">
+                            <h5 class="card-title">{{ producto.nombre }}</h5>
+                            <button type="button" class="btn btn-primary mt-3 btn-agregar">Agregar</button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Columna derecha: Venta -->
+        <div class="col-md-4">
+            <section class="bg-light p-4 shadow rounded">
+                <h4 class="mb-3">Venta actual</h4>
+                <form method="post" id="venta-form">
+                    {% csrf_token %}
+                    <ul class="list-group mb-3" id="productos-lista">
+                        <!-- Items agregados por JS -->
+                    </ul>
+                    <div class="d-flex justify-content-between">
+                        <strong>Total a pagar:</strong>
+                        <span id="total-pagar">$0.00</span>
+                    </div>
+                    <button type="submit" class="btn btn-success mt-3 w-100">Finalizar Venta</button>
+                </form>
+            </section>
+        </div>
+    </div>
 </div>
 
-<script src="{% static 'bootstrap/js/bootstrap.bundle.min.js' %}"></script>
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
-</body>
-</html>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+    const productosLista = document.getElementById('productos-lista');
+    const totalPagar = document.getElementById('total-pagar');
+
+    function actualizarTotal() {
+        let total = 0;
+        productosLista.querySelectorAll('.item-producto').forEach(item => {
+            const subtotal = parseFloat(item.dataset.subtotal);
+            total += subtotal;
+        });
+        totalPagar.textContent = '$' + total.toFixed(2);
+    }
+
+    function crearItemProducto(id, nombre, precio) {
+        const li = document.createElement('li');
+        li.className = 'list-group-item d-flex justify-content-between align-items-center item-producto';
+        li.dataset.id = id;
+        li.dataset.subtotal = precio.toFixed(2);
+
+        li.innerHTML = `
+            <span>${nombre}</span>
+            <input type="hidden" name="producto_id_${id}" value="${id}">
+            <div class="d-flex align-items-center">
+                <button type="button" class="btn btn-outline-secondary btn-sm me-2 btn-restar">−</button>
+                <input type="number" name="cantidad_${id}" value="1" min="1" class="form-control form-control-sm me-2 cantidad" style="width: 60px;">
+                <button type="button" class="btn btn-outline-secondary btn-sm me-3 btn-sumar">+</button>
+                <span class="fw-bold subtotal">$${precio.toFixed(2)}</span>
+                <button type="button" class="btn btn-danger btn-sm ms-3 btn-eliminar">×</button>
+            </div>
+        `;
+
+        // Eventos
+        const inputCantidad = li.querySelector('.cantidad');
+        const subtotalSpan = li.querySelector('.subtotal');
+
+        function actualizarSubtotal() {
+            const cantidad = parseInt(inputCantidad.value);
+            if (cantidad < 1) inputCantidad.value = 1;
+            const subtotal = precio * parseInt(inputCantidad.value);
+            subtotalSpan.textContent = `$${subtotal.toFixed(2)}`;
+            li.dataset.subtotal = subtotal.toFixed(2);
+            actualizarTotal();
+        }
+
+        li.querySelector('.btn-sumar').addEventListener('click', () => {
+            inputCantidad.value = parseInt(inputCantidad.value) + 1;
+            actualizarSubtotal();
+        });
+
+        li.querySelector('.btn-restar').addEventListener('click', () => {
+            inputCantidad.value = Math.max(1, parseInt(inputCantidad.value) - 1);
+            actualizarSubtotal();
+        });
+
+        inputCantidad.addEventListener('change', actualizarSubtotal);
+
+        li.querySelector('.btn-eliminar').addEventListener('click', () => {
+            li.remove();
+            actualizarTotal();
+        });
+
+        return li;
+    }
+
+    document.querySelectorAll('.btn-agregar').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            const card = e.target.closest('.card');
+            const id = card.dataset.id;
+            const nombre = card.dataset.nombre;
+            const precio = parseFloat(card.dataset.precio);
+
+            // Verificar si ya está
+            const existente = productosLista.querySelector(`[data-id="${id}"]`);
+            if (existente) {
+                const inputCantidad = existente.querySelector('.cantidad');
+                inputCantidad.value = parseInt(inputCantidad.value) + 1;
+                inputCantidad.dispatchEvent(new Event('change'));
+                return;
+            }
+
+            const item = crearItemProducto(id, nombre, precio);
+            productosLista.appendChild(item);
+            actualizarTotal();
+        });
+    });
+});
+</script>
+{% endblock %}
