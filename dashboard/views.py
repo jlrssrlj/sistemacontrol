@@ -12,6 +12,12 @@ from django.views.generic import ListView
 from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta
 from .services.listar_ventas import listar_ventas
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.contrib import messages
+
+from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta, MedioPago
 
 
 @require_http_methods(["GET","POST"])
@@ -38,17 +44,7 @@ def logout_view(request):
     auth.logout(request)
     return redirect('home')
 
-@require_http_methods(["GET","POST"])
-def ventas(request):
-    return render(request, 'ventas.html')
 
-
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required
-from django.db import transaction
-from django.contrib import messages
-
-from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta, MedioPago
 
 @login_required
 def crear_venta(request):
@@ -115,7 +111,7 @@ def crear_venta(request):
             item['producto'].save()
 
         messages.success(request, f"Venta registrada exitosamente. Total: ${total:.2f}")
-        return redirect('ventas')  # Cambia a la url que quieras
+        return redirect('ventas')  
 
     # GET
     return render(request, 'ventas.html', {'productos': productos, 'medios_pago': medios_pago})
