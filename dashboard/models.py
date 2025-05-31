@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from decimal import Decimal
 
 # 1. Categoría de Producto
 class Categoria(models.Model):
@@ -42,21 +43,33 @@ class Arqueo(models.Model):
     fecha_fin = models.DateTimeField(null=True, blank=True)
     monto_inicial = models.DecimalField(max_digits=10, decimal_places=2)
     monto_final = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    diferencia = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
 
     def __str__(self):
         return f"Arqueo {self.id} - {self.fecha_inicio.date()}"
 
-# 6. Venta
+# 6. Cliente
+class Cliente(models.Model):
+    nombre = models.CharField(max_length=50)
+    identificacion = models.CharField(max_length=50)
+    telefono = models.CharField(max_length=50)
+    direccion = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+
+# 7. Venta
 class Venta(models.Model):
     empleado = models.ForeignKey(Empleado, on_delete=models.SET_NULL, null=True)  
     arqueo = models.ForeignKey(Arqueo, on_delete=models.SET_NULL, null=True)  
+    cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(max_digits=10, decimal_places=2)
 
     def __str__(self):
         return f"Venta #{self.id} - {self.fecha}"
 
-# 7. Detalle de Venta
+# 8. Detalle de Venta
 class DetalleVenta(models.Model):
     venta = models.ForeignKey(Venta, related_name='detalles', on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True)
@@ -64,14 +77,25 @@ class DetalleVenta(models.Model):
     precio_unitario = models.DecimalField(max_digits=10, decimal_places=2)
 
     def subtotal(self):
-        return self.cantidad * self.precio_unitario
+        return Decimal(self.cantidad) * self.precio_unitario
 
     def __str__(self):
         return f"{self.cantidad} x {self.producto.nombre}"
 
-# 8. Gasto
+# 9. Proveedor
+class Proveedor(models.Model):
+    nombre = models.CharField(max_length=100)
+    nit = models.CharField(max_length=50)
+    direccion = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.nombre
+
+# 10. Gasto
 class Gasto(models.Model):
     empleado = models.ForeignKey(Empleado, on_delete=models.SET_NULL, null=True)
+    proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, null=True)
     concepto = models.CharField(max_length=100)
     monto = models.DecimalField(max_digits=10, decimal_places=2)
     fecha = models.DateTimeField(auto_now_add=True)
@@ -79,3 +103,10 @@ class Gasto(models.Model):
 
     def __str__(self):
         return f"{self.concepto} - {self.monto}"
+    
+class MedioPago(models.Model):
+    nombre = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.nombre
+

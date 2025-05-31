@@ -5,6 +5,8 @@ from django.contrib import auth
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
 from django.db import transaction
+from django.utils import timezone
+from .models import Venta, DetalleVenta, Empleado
 
 from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta
 from .services.venta_services import VentaService
@@ -39,64 +41,80 @@ def logout_view(request):
 def ventas(request):
     return render(request, 'ventas.html')
 
+
+from django.shortcuts import render, redirect, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.db import transaction
+from django.contrib import messages
+
+from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta, MedioPago
+
 @login_required
-@login_required
-def crear_venta_view(request):
-    empleado = get_object_or_404(Empleado, user=request.user)
-    arqueo = Arqueo.objects.filter(empleado=empleado, fecha_fin__isnull=True).first()
-    productos = Producto.objects.filter(stock__gt=0)
+def crear_venta(request):
+    productos = Producto.objects.filter(stock__gt=0).order_by('nombre')
+    medios_pago = MedioPago.objects.all()  # Carga los medios de pago desde BD
 
     if request.method == 'POST':
+        medio_pago_id = request.POST.get('medio_pago')
+        if not medio_pago_id:
+            messages.error(request, "Por favor selecciona un medio de pago.")
+            return render(request, 'tu_template.html', {'productos': productos, 'medios_pago': medios_pago})
+
+        # Aquí puedes obtener el objeto MedioPago si lo necesitas
+        medio_pago = None
         try:
-            with transaction.atomic():
-                # Crear la venta
-                venta = Venta.objects.create(
-                    empleado=empleado,
-                    arqueo=arqueo,
-                    total=0  # Se actualiza más adelante
-                )
+            medio_pago = MedioPago.objects.get(id=medio_pago_id)
+        except MedioPago.DoesNotExist:
+            messages.error(request, "Medio de pago inválido.")
+            return render(request, 'tu_template.html', {'productos': productos, 'medios_pago': medios_pago})
 
-                total_venta = 0
+        
+        productos_venta = []
+        total = 0
+        for key in request.POST.keys():
+            if key.startswith('producto_id_'):
+                prod_id = request.POST[key]
+                cantidad_key = f'cantidad_{prod_id}'
+                try:
+                    cantidad = int(request.POST.get(cantidad_key, 1))
+                    producto = Producto.objects.get(id=prod_id)
+                    if cantidad > producto.stock:
+                        messages.error(request, f"No hay suficiente stock para {producto.nombre}.")
+                        return render(request, 'tu_template.html', {'productos': productos, 'medios_pago': medios_pago})
+                    subtotal = producto.precio * cantidad
+                    total += subtotal
+                    productos_venta.append({'producto': producto, 'cantidad': cantidad, 'subtotal': subtotal})
+                except (Producto.DoesNotExist, ValueError):
+                    messages.error(request, "Datos de producto inválidos.")
+                    return render(request, 'tu_template.html', {'productos': productos, 'medios_pago': medios_pago})
 
-                # Recorrer los productos enviados en el POST
-                for key, value in request.POST.items():
-                    if key.startswith('producto_id_'):
-                        producto_id = key.replace('producto_id_', '')
-                        cantidad_key = f'cantidad_{producto_id}'
-                        cantidad = int(request.POST.get(cantidad_key, 0))
+        if not productos_venta:
+            messages.error(request, "No has agregado productos a la venta.")
+            return render(request, 'tu_template.html', {'productos': productos, 'medios_pago': medios_pago})
 
-                        if cantidad < 1:
-                            continue
+        
+        empleado = Empleado.objects.get(user=request.user)
 
-                        producto = Producto.objects.get(id=producto_id)
+        venta = Venta.objects.create(
+            empleado=empleado,
+            total=total,
+            fecha=timezone.now(),
+            
+        )
 
-                        if producto.stock < cantidad:
-                            messages.error(request, f"No hay suficiente stock para {producto.nombre}")
-                            raise Exception("Stock insuficiente")
+        for item in productos_venta:
+            DetalleVenta.objects.create(
+                venta=venta,
+                producto=item['producto'],
+                cantidad=item['cantidad'],
+                precio_unitario=item['producto'].precio
+            )
+            # Actualiza stock
+            item['producto'].stock -= item['cantidad']
+            item['producto'].save()
 
-                        subtotal = cantidad * producto.precio
+        messages.success(request, f"Venta registrada exitosamente. Total: ${total:.2f}")
+        return redirect('ventas')  # Cambia a la url que quieras
 
-                        DetalleVenta.objects.create(
-                            venta=venta,
-                            producto=producto,
-                            cantidad=cantidad,
-                            precio_unitario=producto.precio
-                        )
-
-                        producto.stock -= cantidad
-                        producto.save()
-
-                        total_venta += subtotal
-
-                venta.total = total_venta
-                venta.save()
-
-                messages.success(request, "Venta registrada exitosamente.")
-                return redirect('ventas')  # Cambia por el nombre real de tu URL
-
-        except Exception as e:
-            messages.error(request, f"Error al procesar la venta: {str(e)}")
-
-    return render(request, 'ventas.html', {
-        'productos': productos
-    })
+    # GET
+    return render(request, 'ventas.html', {'productos': productos, 'medios_pago': medios_pago})
