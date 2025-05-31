@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.views.decorators.http import require_http_methods
+from django.http import JsonResponse
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import auth
 from django.contrib.auth.decorators import login_required
@@ -7,10 +8,10 @@ from django.contrib import messages
 from django.db import transaction
 from django.utils import timezone
 from .models import Venta, DetalleVenta, Empleado
-
+from django.views.generic import ListView
 from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta
-from .services.venta_services import VentaService
-
+from .services.listar_ventas import listar_ventas
+from django.contrib.auth.mixins import LoginRequiredMixin
 
 
 @require_http_methods(["GET","POST"])
@@ -118,3 +119,15 @@ def crear_venta(request):
 
     # GET
     return render(request, 'ventas.html', {'productos': productos, 'medios_pago': medios_pago})
+
+
+class historial_ventas(LoginRequiredMixin,ListView):
+    template_name = 'historial_ventas.html'  # Qué plantilla usar para mostrar la lista
+    context_object_name = 'ventas'                # Cómo se llamará la variable que contiene la lista en el template
+    paginate_by = 10                              # Número de items por página (paginación)
+
+    def get_queryset(self):
+        return listar_ventas()
+    
+
+
