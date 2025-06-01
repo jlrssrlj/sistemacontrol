@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-danger text-white">
+            <h4>Eliminar Arqueo</h4>
+        </div>
+        <div class="card-body">
+            <p>¿Estás seguro de que deseas eliminar el arqueo <strong>#{{ arqueo.id }}</strong> de {{ arqueo.fecha_inicio|date:"Y-m-d" }}?</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+                <a href="{% url 'listar_arqueos' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

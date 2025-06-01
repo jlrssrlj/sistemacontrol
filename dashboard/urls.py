@@ -10,5 +10,13 @@ urlpatterns = [
     path('historial_ventas', views.historial_ventas.as_view(), name='historial_ventas'),
     path('crear_usuario', views.crear_usuario, name='crear_usuario'),
     path('no-autorizado/', views.no_autorizado, name='no_autorizado'),
+    path('listar_empleado/', views.listar_empleado, name='listar_empleado'),
+    path('empleado/editar/<int:id>/', views.editar_empleado, name='editar_empleado'),
+    path('empleado/eliminar/<int:id>/', views.eliminar_empleado, name='eliminar_empleado'),
+    path('arqueos/', views.listar_arqueo, name='listar_arqueos'),
+    path('arqueos/abrir/',views.crear_arqueo,name='crear_arqueo'),
+    path('arqueos/cerrar/<int:id>/',views.cerrar_arqueo,name='cerrar_arqueo'),
+    path('arqueos/eliminar/<int:id>/',views.eliminar_arqueo,name='eliminar_arqueo')
+
 
 ]

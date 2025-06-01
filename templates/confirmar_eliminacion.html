@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Confirmar Eliminación</h2>
+    <p>¿Estás seguro de que quieres eliminar al empleado <strong>{{ empleado.user.get_full_name }}</strong>?</p>
+
+    <form method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-danger">Eliminar</button>
+        <a href="{% url 'listar_empleados' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}

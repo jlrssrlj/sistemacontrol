@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2>Editar Empleado: {{ empleado.user.get_full_name }}</h2>
+
+    <form method="post">
+    {% csrf_token %}
+
+    <div class="mb-3">
+        <label for="first_name" class="form-label">Nombre</label>
+        <input type="text" class="form-control" id="first_name" name="first_name"
+               value="{{ empleado.user.first_name }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="last_name" class="form-label">Apellido</label>
+        <input type="text" class="form-control" id="last_name" name="last_name"
+               value="{{ empleado.user.last_name }}" required>
+    </div>
+
+    <div class="mb-3">
+        <label for="rol" class="form-label">Rol</label>
+        <select id="rol" name="rol" class="form-select">
+            {% for rol in roles %}
+                <option value="{{ rol.id }}" {% if empleado.rol.id == rol.id %}selected{% endif %}>{{ rol.nombre }}</option>
+            {% endfor %}
+        </select>
+    </div>
+    <div class="form-check mb-3">
+    <input type="checkbox" id="is_staff" name="is_staff" class="form-check-input"
+           {% if empleado.user.is_staff %}checked{% endif %}>
+    <label for="is_staff" class="form-check-label">¿Es administrador?</label>
+    </div>
+
+
+    <div class="form-check mb-3">
+        <input type="checkbox" id="activo" name="activo" class="form-check-input"
+               {% if empleado.activo %}checked{% endif %}>
+        <label for="activo" class="form-check-label">Activo</label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+    <a href="{% url 'listar_empleado' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+
+
+</div>
+{% endblock %}

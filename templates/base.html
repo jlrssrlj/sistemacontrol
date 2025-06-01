@@ -102,7 +102,7 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'ventas' %}">Realizar Venta</a></li>
               <li><a class="dropdown-item" href="{% url 'historial_ventas' %}">Ventas</a></li>
-              <li><a class="dropdown-item" href="#">Arqueo de Caja</a></li>
+              <li><a class="dropdown-item" href="{% url 'crear_arqueo' %}">Arqueo de Caja</a></li>
             </ul>
           </li>
 
@@ -131,7 +131,8 @@
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="#">Crear Rol</a></li>
-              <li><a class="dropdown-item" href="{% url 'crear_usuario' %}">Ver Usuarios</a></li>
+              <li><a class="dropdown-item" href="{% url 'crear_usuario' %}">Crear Usuarios</a></li>
+              <li><a class="dropdown-item" href="{% url 'listar_empleado' %}">Ver Usuarios</a></li>
             </ul>
           </li>
 

@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card shadow">
+        <div class="card-header bg-warning text-dark">
+            <h4>Cerrar Arqueo</h4>
+        </div>
+        <div class="card-body">
+            <p><strong>Fecha de inicio:</strong> {{ arqueo.fecha_inicio }}</p>
+            <p><strong>Monto inicial:</strong> ${{ arqueo.monto_inicial }}</p>
+
+            <form method="post">
+                {% csrf_token %}
+                <div class="mb-3">
+                    <label for="monto_final" class="form-label">Monto Final</label>
+                    <input type="number" step="0.01" class="form-control" name="monto_final" required>
+                </div>
+                <button type="submit" class="btn btn-success">Cerrar Arqueo</button>
+                <a href="{% url 'listar_arqueos' %}" class="btn btn-secondary">Cancelar</a>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

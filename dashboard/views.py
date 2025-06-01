@@ -6,8 +6,10 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta, MedioPago
+from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta, MedioPago,Rol
 from .services.listar_ventas import listar_ventas
+from .services.usuario_service import UsuarioService
+from .services.arqueo_service import ArqueoService
 from .forms import UsuarioEmpleadoForm
 from django.contrib.auth.models import User
 from dashboard.decorators import rol_requerido
@@ -31,45 +33,75 @@ def admin(user):
 def solo_admin(view_func):
     @wraps(view_func)
     def _wrapped_view(request, *args, **kwargs):
+        user = request.user
+        if not user.is_authenticated:
+            return redirect('login')
+
+        # Permitir acceso a superusuarios y usuarios con is_staff
+        if user.is_superuser or user.is_staff:
+            return view_func(request, *args, **kwargs)
+
         try:
-            empleado = Empleado.objects.get(user=request.user)
-            if empleado.rol.nombre == 'admin':
+            empleado = Empleado.objects.get(user=user)
+            if empleado.rol.nombre.lower() == 'admin':
                 return view_func(request, *args, **kwargs)
-            else:
-                return redirect('no_autorizado')
         except Empleado.DoesNotExist:
-            return redirect('no_autorizado')
+            pass  # Continuamos a redirección
+
+        return redirect('no_autorizado')
     return _wrapped_view
 
 @login_required
 @solo_admin
 def crear_usuario(request):
-    if request.method =='POST':
+    if request.method == 'POST':
         form = UsuarioEmpleadoForm(request.POST)
         if form.is_valid():
             username = form.cleaned_data['username']
             if User.objects.filter(username=username).exists():
                 messages.error(request, "El usuario ya existe")
-                return render(request, 'crear_usuario.html')
-            
-            user = User.objects.create_user(
-                username=username,
-                password=form.cleaned_data['password'],
-                first_name = form.cleaned_data['firsta_name'],
-                last_name = form.cleaned_data['last_name'],
-                email=form.cleaned_data['email'],
-                is_staff=True
-            )
-            Empleado.objects.create(
-                user=user,
-                rol=form.cleaned_data['rol'],
-                activo=True
-            )
-            messages.success(request,f"Empleado{user.get_full_name()} creado correctamente")
-            return redirect('listar_empleados.html')
+            else:
+                user = UsuarioService.crear_usuario_empleado(form.cleaned_data)
+                messages.success(request, f"Empleado {user.get_full_name()} creado correctamente")
+                return redirect('listar_empleado')
     else:
         form = UsuarioEmpleadoForm()
-    return render(request,'crear_usuario.html', {'form':form})
+
+    return render(request, 'crear_usuario.html', {'form': form})
+
+@login_required
+def listar_empleado(request):
+    empleados = UsuarioService.obtener_empleados()
+    return render(request, "listar_empleados.html", {'empleados': empleados})
+
+@login_required
+def editar_empleado(request, id):
+    empleado = get_object_or_404(Empleado, id=id)
+
+    if request.method == 'POST':
+        data = {
+            'first_name': request.POST.get('first_name'),
+            'last_name': request.POST.get('last_name'),
+            'activo': request.POST.get('activo') == 'on',
+            'rol': get_object_or_404(Rol, id=request.POST.get('rol')) if request.POST.get('rol') else None,
+            'is_staff': request.POST.get('is_staff') == 'on'
+        }
+        UsuarioService.actualizar_usuario_empleado(empleado, data, request.user.is_superuser)
+        messages.success(request, 'Empleado actualizado correctamente.')
+        return redirect('listar_empleado')
+
+    roles = UsuarioService.obtener_roles()
+    return render(request, 'editar_empleado.html', {'empleado': empleado, 'roles': roles})
+
+@login_required
+def eliminar_empleado(request, id):
+    if request.method == 'POST':
+        UsuarioService.eliminar_empleado(id)
+        messages.success(request, 'Empleado eliminado correctamente.')
+        return redirect('listar_empleado')
+
+    empleado = get_object_or_404(Empleado, id=id)
+    return render(request, 'confirmar_eliminacion.html', {'empleado': empleado})
 
 @require_http_methods(["GET","POST"])
 def login_view(request):
@@ -173,5 +205,63 @@ class historial_ventas(LoginRequiredMixin,ListView):
     def get_queryset(self):
         return listar_ventas()
     
+def producto_list(request):
+    return render(request,'listar_producto.html')
+
+@login_required
+def crear_arqueo(request):
+    if request.method == 'POST':
+        monto_inicial = request.POST.get('monto_inicial')
+        
+        try:
+            monto_inicial = float(monto_inicial)
+        except ValueError:
+            return render(request,'crear_arqueo.html')
+        
+        empleado = request.user.empleado
+
+        data ={
+            'monto_inicial': monto_inicial,
+            'empleado': empleado
+        }
+
+        ArqueoService.crear_arqueo(data)
+        return redirect('listar_arqueos')
+    return render(request,'crear_arqueo.html')
+
+@login_required
+@solo_admin
+def cerrar_arqueo(request, id):
+    arqueo = ArqueoService.obtener_arqueo(id)
+
+    if request.method == 'POST':
+        monto_final_str = request.POST.get('monto_final')
+        try:
+            monto_final = float(monto_final_str)
+        except (ValueError, TypeError):
+            messages.error(request, 'Monto final inválido.')
+            return render(request, 'cerrar_arqueo.html', {'arqueo': arqueo})
+
+        ArqueoService.cerrar_arqueo(id, monto_final)
+        messages.success(request, 'Arqueo cerrado correctamente.')
+        return redirect('listar_arqueos')
+
+    return render(request, 'cerrar_arqueo.html', {'arqueo': arqueo})
+
+
+@login_required
+def listar_arqueo(request):
+    arqueos = ArqueoService.listar_arqueos()
+    return render(request,'listar_arqueos.html',{'arqueos': arqueos})
+
+@login_required
+def eliminar_arqueo(request, id):
+    arqueo = ArqueoService.eliminar_arqueo(id)
+
+    if request.method == 'POST':
+        ArqueoService.eliminar_arqueo(id)
+        return redirect('listar_arqueo')
+    return render(request,'confirmacion_eliminacion_arqueo.html', {'arqueo':arqueo})
+
 
 
