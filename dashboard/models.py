@@ -37,16 +37,16 @@ class Empleado(models.Model):
         return self.user.get_full_name()
 
 # 5. Arqueo de Caja
-class Arqueo(models.Model):
-    empleado = models.ForeignKey(Empleado, on_delete=models.SET_NULL, null=True)  
-    fecha_inicio = models.DateTimeField()
-    fecha_fin = models.DateTimeField(null=True, blank=True)
-    monto_inicial = models.DecimalField(max_digits=10, decimal_places=2)
-    monto_final = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    diferencia = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+class Arqueo(models.Model):  #Se crea una clase llamado arqueo que representa una tabla de la base de datos, cada vez que se cree un arqueo nuevo se guardara la informacion en dicha tabla.
+    empleado = models.ForeignKey(Empleado, on_delete=models.SET_NULL, null=True)  #almacena el nombre del empleado que realizo el arqueo medianmte una relacion que se conecta con el modelo empleado.
+    fecha_inicio = models.DateTimeField()   #guarda la informacion de cuando se realizo el arqueo, fecha y hora.
+    fecha_fin = models.DateTimeField(null=True, blank=True)     # guarda la informacion de cuando termina el arqueo, si no ha terminado deja la palabra null
+    monto_inicial = models.DecimalField(max_digits=10, decimal_places=2)    # almacena la cantidad o monto inicial con la que se iniciara el arqueo.
+    monto_final = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)   #guarda la cantidad o monto final al cerrar el arqueo, si no se ha cerrado deja la palabra null
+    diferencia = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)    # almacena la diferencia entre el monto inicial y el monto final, esta operacion se realiza en arqueo_service.py
 
     def __str__(self):
-        return f"Arqueo {self.id} - {self.fecha_inicio.date()}"
+        return f"Arqueo {self.id} - {self.fecha_inicio.date()}" #Muestra la informacion del arqueo.
 
 # 6. Cliente
 class Cliente(models.Model):

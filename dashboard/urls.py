@@ -16,7 +16,11 @@ urlpatterns = [
     path('arqueos/', views.listar_arqueo, name='listar_arqueos'),
     path('arqueos/abrir/',views.crear_arqueo,name='crear_arqueo'),
     path('arqueos/cerrar/<int:id>/',views.cerrar_arqueo,name='cerrar_arqueo'),
-    path('arqueos/eliminar/<int:id>/',views.eliminar_arqueo,name='eliminar_arqueo')
+    path('arqueos/eliminar/<int:id>/',views.eliminar_arqueo,name='eliminar_arqueo'),
+    path('listar_producto/', views.listar_producto, name='listar_producto'),
+    path('listar_producto/crear/',views.crear_producto,name='crear_producto'),
+    path('listar_producto/editar/<int:id>/', views.editar_producto, name='editar_producto'),
+    path('listar_producto/eliminar/<int:id>/',views.eliminar_producto,name='eliminar_producto')
 
 
 ]

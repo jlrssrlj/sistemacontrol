@@ -6,10 +6,11 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta, MedioPago,Rol
+from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta, MedioPago,Rol, Categoria
 from .services.listar_ventas import listar_ventas
 from .services.usuario_service import UsuarioService
 from .services.arqueo_service import ArqueoService
+from .services.listar_producto import ProductoService
 from .forms import UsuarioEmpleadoForm
 from django.contrib.auth.models import User
 from dashboard.decorators import rol_requerido
@@ -263,5 +264,59 @@ def eliminar_arqueo(request, id):
         return redirect('listar_arqueo')
     return render(request,'confirmacion_eliminacion_arqueo.html', {'arqueo':arqueo})
 
+@login_required
+def crear_producto(request):
+    if request.method == 'POST':
+        data = {
+            'nombre': request.POST.get('nombre'),
+            'descripcion': request.POST.get('descripcion'),
+            'precio': request.POST.get('precio'),
+            'stock': request.POST.get('stock'),
+            'categoria_id': request.POST.get('categoria_id')
+        }
 
+        ProductoService.crear_producto(data)
+        messages.success(request, 'Producto creado correctamente.')
+        return redirect('listar_producto')
+
+    categorias = Categoria.objects.all()
+    return render(request, 'crear_producto.html', {'categorias': categorias})
+
+
+@login_required
+def listar_producto(request):
+    producto = ProductoService.listar_producto()
+    return render(request, 'listar_producto.html', {'producto': producto})
+
+
+@login_required
+def editar_producto(request, id):
+    producto = get_object_or_404(Producto, id=id)
+
+    if request.method == 'POST':
+        data = {
+            'nombre': request.POST.get('nombre'),
+            'descripcion': request.POST.get('descripcion'),
+            'precio': request.POST.get('precio'),
+            'stock': request.POST.get('stock'),
+            'categoria_id': request.POST.get('categoria_id')
+        }
+        ProductoService.actualizar_producto(producto.id, data)
+        messages.success(request, 'Producto actualizado correctamente.')
+        return redirect('listar_producto')
+
+    categorias = Categoria.objects.all()
+    return render(request, 'editar_producto.html', {'producto': producto, 'categorias': categorias})
+
+
+@login_required
+def eliminar_producto(request, id):
+    producto = get_object_or_404(Producto, id=id)
+
+    if request.method == 'POST':
+        ProductoService.eliminar_producto(id)
+        messages.success(request, 'Producto eliminado correctamente.')
+        return redirect('listar_producto')
+
+    return render(request, 'confirmar_eliminacion_producto.html', {'producto': producto})
 
