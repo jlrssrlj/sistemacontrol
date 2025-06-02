@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between mb-3">
+        <h2>Listado de Gastos</h2>
+        <a href="{% url 'crear_gastos' %}" class="btn btn-primary">Crear nuevo Gasto</a>
+    </div>
+
+    <div class="table-responsive">    
+    <table class="table table-hover align-middle">
+        <thead class="table-dark">
+            <tr>
+                <th>Empleado</th>
+                <th>Proveedor</th>
+                <th>Concepto</th>
+                <th>Monto</th>
+                <th>Fecha</th>
+                <th>Arqueo</th>
+                <th>Accciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for gastos in gastos %}
+                <tr>
+                    <td>{{ gastos.empleado.user.get_full_name }}</td>
+                    <td>{{ gastos.proveedor.nombre }}</td>
+                    <td>{{ gastos.concepto }}</td>
+                    <td>${{ gastos.monto }}</td>
+                    <td>{{ gastos.fecha|date:"Y-m-d H:i" }}</td>
+                    <td>{% if gastos.arqueo %}{{ gastos.arqueo.id }}{% else %}-{% endif %}</td>
+                    <td>
+                        {% if gastos.id %}
+                            <a href="{% url 'editar_gastos' gastos.id %}" class="btn btn-sm btn-warning">Editar</a>
+                            <a href="{% url 'eliminar_gastos' gastos.id %}" class="btn btn-sm btn-danger">Eliminar</a>
+                        {% else %}
+                            <span class="text-muted">No disponible</span>
+                        {% endif %}
+                    </td>
+
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-center">No hay gastos registrados.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

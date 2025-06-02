@@ -6,11 +6,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta, MedioPago,Rol, Categoria
+from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta, MedioPago,Rol, Categoria, Gastos
+from dashboard.models import Proveedor, Gastos
 from .services.listar_ventas import listar_ventas
 from .services.usuario_service import UsuarioService
 from .services.arqueo_service import ArqueoService
 from .services.listar_producto import ProductoService
+from .services.listar_gastos import GastosService
 from .forms import UsuarioEmpleadoForm
 from django.contrib.auth.models import User
 from dashboard.decorators import rol_requerido
@@ -319,4 +321,92 @@ def eliminar_producto(request, id):
         return redirect('listar_producto')
 
     return render(request, 'confirmar_eliminacion_producto.html', {'producto': producto})
+
+@login_required
+def listar_gastos(request):
+    gastos = GastosService.listar_gastos()
+    return render(request, 'listar_gastos.html', {'gastos': gastos})
+
+@login_required
+def crear_gastos(request):
+    if request.method == 'POST':
+        empleado_id = request.POST.get('empleado')
+        proveedor_id = request.POST.get('proveedor')
+        concepto = request.POST.get('concepto')
+        monto = request.POST.get('monto')
+        arqueo_id = request.POST.get('arqueo')
+
+        empleado = get_object_or_404(Empleado, id=empleado_id)
+        proveedor = get_object_or_404(Proveedor, id=proveedor_id)
+        arqueo = Arqueo.objects.filter(id=arqueo_id).first() if arqueo_id else None
+
+        Gastos.objects.create(
+            empleado=empleado,
+            proveedor=proveedor,
+            concepto=concepto,
+            monto=monto,
+            fecha=timezone.now(),
+            arqueo=arqueo
+        )
+
+        messages.success(request, 'Gastos registrados correctamente.')
+        return redirect('listar_gastos')
+
+    empleados = Empleado.objects.all()
+    proveedores = Proveedor.objects.all()
+    arqueos = Arqueo.objects.all()
+
+    return render(request, 'crear_gastos.html', {
+        'empleados': empleados,
+        'proveedores': proveedores,
+        'arqueos': arqueos 
+    })
+
+@login_required
+def editar_gastos(request, id):
+    gastos = get_object_or_404(Gastos, id=id)
+
+    if request.method == 'POST':
+        gastos.empleado_id = request.POST.get('empleado')
+        gastos.proveedor_id = request.POST.get('proveedor')
+        gastos.concepto = request.POST.get('concepto')
+        gastos.monto = request.POST.get('monto')
+        
+        arqueo_id = request.POST.get('arqueo')
+        gastos.arqueo_id = arqueo_id if arqueo_id else None  
+
+        gastos.save()
+
+        messages.success(request, 'Gastos actualizado correctamente.')
+        return redirect('listar_gastos')
+
+    empleados = Empleado.objects.all()
+    proveedores = Proveedor.objects.all()
+    arqueos = Arqueo.objects.all() 
+
+    return render(request, 'editar_gastos.html', {
+        'gastos': gastos,
+        'empleados': empleados,
+        'proveedores': proveedores,
+        'arqueos': arqueos  
+    })
+
+
+@login_required
+def eliminar_gastos(request, id):
+    gastos = get_object_or_404(Gastos, id=id)
+
+    if request.method == 'POST':
+        gastos.delete()
+        messages.success(request, 'Gastos eliminados correctamente.')
+        return redirect('listar_gastos')
+
+    return render(request, 'confirmar_eliminar_gastos.html', {'gastos': gastos})
+
+
+
+
+
+
+
 

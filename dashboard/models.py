@@ -93,7 +93,7 @@ class Proveedor(models.Model):
         return self.nombre
 
 # 10. Gasto
-class Gasto(models.Model):
+class Gastos(models.Model):
     empleado = models.ForeignKey(Empleado, on_delete=models.SET_NULL, null=True)
     proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, null=True)
     concepto = models.CharField(max_length=100)
