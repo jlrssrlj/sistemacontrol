@@ -10,20 +10,19 @@ class ProductoService:
         
         if categoria_id:
             try:
-                categoria = Categoria.objects.get(id=categoria_id)
-            except Categoria.DoesNotExist:
+                categoria = Categoria.objects.get(id=int(categoria_id))
+            except (Categoria.DoesNotExist, ValueError, TypeError):
                 categoria = None
                 
         producto = Producto.objects.create(
-            nombre = data['nombre'],
-            descripcion = data['descripcion'],
-            precio = data['precio'],
-            stock = data['stock'],
-            categoria = categoria
-            #categoria = data ['categoria'],
-            #categoria = data.get('categoria')
+            nombre=data['nombre'],
+            descripcion=data['descripcion'],
+            precio=data['precio'],
+            stock=data['stock'],
+            categoria=categoria
         )
         return producto
+
     
     @staticmethod
     def actualizar_producto(producto_id,data):

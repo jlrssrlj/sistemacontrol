@@ -102,7 +102,7 @@
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'ventas' %}">Realizar Venta</a></li>
               <li><a class="dropdown-item" href="{% url 'historial_ventas' %}">Ventas</a></li>
-              <li><a class="dropdown-item" href="{% url 'crear_arqueo' %}">Arqueo de Caja</a></li>
+              <li><a class="dropdown-item" href="{% url 'listar_arqueos' %}">Arqueo de Caja</a></li>
             </ul>
           </li>
 
@@ -113,13 +113,13 @@
             </a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'listar_producto' %}">Productos</a></li>
-              <li><a class="dropdown-item" href="#">Categorias</a></li>
+              <li><a class="dropdown-item" href="{% url 'listar_categoria' %}">Categorias</a></li>
               <li><a class="dropdown-item" href="#">Inventario</a></li>
             </ul>
           </li>
 
           <li class="nav-item">
-            <a class="nav-link" href="#">
+            <a class="nav-link" href="{% url 'listar_gastos' %}">
               <i class="bi bi-cash-coin me-1"></i> Gastos
             </a>
           </li>

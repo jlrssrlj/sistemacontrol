@@ -1,4 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Sum
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import auth, messages
@@ -6,11 +7,13 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from dashboard.models import Empleado, Arqueo, Producto, Venta, DetalleVenta, MedioPago,Rol, Categoria
+from dashboard.models import Empleado,Gasto, Proveedor, Arqueo,Producto, Venta, DetalleVenta, MedioPago,Rol, Categoria
 from .services.listar_ventas import listar_ventas
 from .services.usuario_service import UsuarioService
 from .services.arqueo_service import ArqueoService
 from .services.listar_producto import ProductoService
+from .services.categoria_service import CategoriaService
+from .services.gastos_service import GastosService
 from .forms import UsuarioEmpleadoForm
 from django.contrib.auth.models import User
 from dashboard.decorators import rol_requerido
@@ -236,24 +239,29 @@ def cerrar_arqueo(request, id):
     arqueo = ArqueoService.obtener_arqueo(id)
 
     if request.method == 'POST':
-        monto_final_str = request.POST.get('monto_final')
+        monto_final = request.POST.get('monto_final')
         try:
-            monto_final = float(monto_final_str)
-        except (ValueError, TypeError):
-            messages.error(request, 'Monto final inválido.')
-            return render(request, 'cerrar_arqueo.html', {'arqueo': arqueo})
+            monto_final = float(monto_final)
+            ArqueoService.cerrar_arqueo(id, monto_final)
+            return redirect('listar_arqueos')  
+        except ValueError:
+            return render(request, 'cerrar_arqueo.html', {
+                'arqueo': arqueo,
+                'error': 'El monto final debe ser un número válido.'
+            })
 
-        ArqueoService.cerrar_arqueo(id, monto_final)
-        messages.success(request, 'Arqueo cerrado correctamente.')
-        return redirect('listar_arqueos')
-
-    return render(request, 'cerrar_arqueo.html', {'arqueo': arqueo})
+    return render(request, 'cerrar_arqueo.html', {
+        'arqueo': arqueo
+    })
 
 
 @login_required
 def listar_arqueo(request):
     arqueos = ArqueoService.listar_arqueos()
-    return render(request,'listar_arqueos.html',{'arqueos': arqueos})
+    context = {
+        'arqueos': arqueos,
+    }
+    return render(request,'listar_arqueos.html',context)
 
 @login_required
 def eliminar_arqueo(request, id):
@@ -267,12 +275,15 @@ def eliminar_arqueo(request, id):
 @login_required
 def crear_producto(request):
     if request.method == 'POST':
+        categoria_id = request.POST.get('categoria_id')
+        print(f"Categoria ID recibida: {categoria_id}")  # <-- Depuración
+
         data = {
             'nombre': request.POST.get('nombre'),
             'descripcion': request.POST.get('descripcion'),
             'precio': request.POST.get('precio'),
             'stock': request.POST.get('stock'),
-            'categoria_id': request.POST.get('categoria_id')
+            'categoria_id': categoria_id
         }
 
         ProductoService.crear_producto(data)
@@ -281,6 +292,7 @@ def crear_producto(request):
 
     categorias = Categoria.objects.all()
     return render(request, 'crear_producto.html', {'categorias': categorias})
+
 
 
 @login_required
@@ -319,4 +331,114 @@ def eliminar_producto(request, id):
         return redirect('listar_producto')
 
     return render(request, 'confirmar_eliminacion_producto.html', {'producto': producto})
+
+@login_required
+def listar_categoria(request):
+    categorias = CategoriaService.listar_categoria()
+    print("Categorias en vista:", categorias)
+    return render(request, 'listar_categoria.html', {'categorias': categorias})
+
+@login_required
+def crear_categoria(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        if nombre:
+            CategoriaService.crear_categoria({'nombre':nombre})
+            return redirect('listar_categoria')
+    return render(request,'crear_categoria.html')
+
+@login_required
+def editar_categoria(request, categoria_id):
+    categoria = CategoriaService.obtener_categoria(categoria_id)
+
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        if nombre:
+            
+            CategoriaService.editar_categoria(categoria_id, {'nombre': nombre})
+            return redirect('listar_categoria')
+
+    return render(request, 'editar_categoria.html', {'categoria': categoria})
+
+from django.views.decorators.http import require_POST
+
+@login_required
+@require_POST
+def eliminar_categoria(request, categoria_id):
+    try:
+        CategoriaService.eliminar_categoria(categoria_id)
+        
+    except Exception:
+        messages.error(request, 'Error al eliminar la categoría.')
+    return redirect('listar_categoria')
+
+
+@login_required
+def listar_gatos(request):
+    gastos = GastosService.listar_gastos()
+    return render(request, 'listar_gastos.html', {'gastos': gastos})
+
+
+@login_required
+def crear_gasto(request):
+    if request.method == 'POST':
+        empleado = Empleado.objects.get(user=request.user)
+
+        arqueo_abierto = Arqueo.objects.filter(empleado=empleado, fecha_fin__isnull=True).first()
+        if not arqueo_abierto:
+            messages.error(request, "Debe tener un arqueo abierto para registrar un gasto.")
+            return redirect('listar_arqueos')
+
+        data = {
+            'empleado': empleado,
+            'proveedor': Proveedor.objects.get(id=request.POST['proveedor']),
+            'concepto': request.POST['concepto'],
+            'monto': request.POST['monto'],
+            'arqueo': arqueo_abierto
+        }
+
+        GastosService.crear_gastos(data)
+        messages.success(request, "Gasto registrado exitosamente.")
+        return redirect('listar_gastos')
+
+    proveedores = Proveedor.objects.all()
+    return render(request, 'crear_gastos.html', {
+        'proveedores': proveedores
+    })
+
+
+@login_required
+def editar_gasto(request, id):
+    gasto = GastosService.obtener_gasto(id)
+
+    if request.method == 'POST':
+        data = {
+            'empleado': Empleado.objects.get(id=request.POST['empleado']),
+            'proveedor': Proveedor.objects.get(id=request.POST['proveedor']),
+            'concepto': request.POST['concepto'],
+            'monto': request.POST['monto'],
+            'arqueo': Arqueo.objects.get(id=request.POST['arqueo']),
+        }
+        GastosService.editar_gasto(id, data)
+        messages.success(request, "Gasto editado correctamente.")
+        return redirect('listar_gastos')
+
+    empleados = Empleado.objects.all()
+    proveedores = Proveedor.objects.all()
+    arqueos = Arqueo.objects.all()
+
+    return render(request, 'editar_gasto.html', {
+        'gasto': gasto,
+        'empleados': empleados,
+        'proveedores': proveedores,
+        'arqueos': arqueos,
+    })
+
+
+@login_required
+def eliminar_gasto(request, id):
+    if request.method == 'POST':
+        GastosService.eliminar_gasto(id)
+        messages.success(request, "Gasto eliminado correctamente.")
+    return redirect('listar_gastos')
 

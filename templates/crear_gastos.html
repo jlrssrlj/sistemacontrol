@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <h2 class="mb-4">Registrar Gasto</h2>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label for="proveedor" class="form-label">Proveedor</label>
+            <select id="proveedor" name="proveedor" class="form-select" required>
+                {% for proveedor in proveedores %}
+                    <option value="{{ proveedor.id }}">{{ proveedor.nombre }}</option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="mb-3">
+            <label for="concepto" class="form-label">Concepto</label>
+            <textarea class="form-control" id="concepto" name="concepto" rows="3" maxlength="200" placeholder="Motivo del gasto" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="monto" class="form-label">Monto</label>
+            <input type="number" class="form-control" id="monto" name="monto" step="0.01" required placeholder="Ej. 150.00">
+        </div>
+
+        <button type="submit" class="btn btn-success">Guardar Gasto</button>
+        <a href="{% url 'listar_gastos' %}" class="btn btn-secondary">Cancelar</a>
+    </form>
+</div>
+{% endblock %}
