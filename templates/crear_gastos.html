@@ -2,29 +2,10 @@
 
 {% block content %}
 <div class="container mt-5">
-    <h2>Crear Gasto</h2>
+    <h2 class="mb-4">Registrar Gasto</h2>
 
     <form method="post">
         {% csrf_token %}
-
-        <div class="mb-3">
-            <label for="concepto" class="form-label">Concepto</label>
-            <input type="text" class="form-control" id="concepto" name="concepto" required maxlength="100" placeholder="Concepto del gasto">
-        </div>
-
-        <div class="mb-3">
-            <label for="monto" class="form-label">Monto</label>
-            <input type="number" class="form-control" id="monto" name="monto" step="0.01" required placeholder="Monto del gasto">
-        </div>
-
-        <div class="mb-3">
-            <label for="empleado" class="form-label">Empleado</label>
-            <select id="empleado" name="empleado" class="form-select" required>
-                {% for empleado in empleados %}
-                    <option value="{{ empleado.id }}">{{ empleado.user.get_full_name }}</option>
-                {% endfor %}
-            </select>
-        </div>
 
         <div class="mb-3">
             <label for="proveedor" class="form-label">Proveedor</label>
@@ -36,13 +17,13 @@
         </div>
 
         <div class="mb-3">
-            <label for="arqueo" class="form-label">Arqueo (opcional)</label>
-            <select id="arqueo" name="arqueo" class="form-select">
-                <option value="">--- Ninguno ---</option>
-                {% for arqueo in arqueos %}
-                    <option value="{{ arqueo.id }}">Inicio: {{ arqueo.fecha_inicio|date:"Y-m-d H:i" }}</option>
-                {% endfor %}
-            </select>
+            <label for="concepto" class="form-label">Concepto</label>
+            <textarea class="form-control" id="concepto" name="concepto" rows="3" maxlength="200" placeholder="Motivo del gasto" required></textarea>
+        </div>
+
+        <div class="mb-3">
+            <label for="monto" class="form-label">Monto</label>
+            <input type="number" class="form-control" id="monto" name="monto" step="0.01" required placeholder="Ej. 150.00">
         </div>
 
         <button type="submit" class="btn btn-success">Guardar Gasto</button>

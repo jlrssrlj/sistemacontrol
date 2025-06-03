@@ -21,10 +21,14 @@ urlpatterns = [
     path('listar_producto/crear/',views.crear_producto,name='crear_producto'),
     path('listar_producto/editar/<int:id>/', views.editar_producto, name='editar_producto'),
     path('listar_producto/eliminar/<int:id>/',views.eliminar_producto,name='eliminar_producto'),
-    path('listar_gastos/', views.listar_gastos, name='listar_gastos'),
-    path('listar_gastos/crear/',views.crear_gastos,name='crear_gastos'),
-    path('listar_gastos/editar/<int:id>/', views.editar_gastos, name='editar_gastos'),
-    path('listar_gastos/eliminar/<int:id>/',views.eliminar_gastos,name='eliminar_gastos'),
+    path('categorias/', views.listar_categoria, name='listar_categoria'),
+    path('categoria/crear/', views.crear_categoria,name='crear_categoria'),
+    path('categorias/editar/<int:categoria_id>/', views.editar_categoria, name='editar_categoria'),
+    path('categorias/eliminar/<int:categoria_id>/', views.eliminar_categoria, name='eliminar_categoria'),
+    path('listar_gastos/',views.listar_gatos, name='listar_gastos'),
+    path('listar_gastos/crear_gastos/',views.crear_gasto,name='crear_gasto'),
+    path('gastos/editar/<int:id>/', views.editar_gasto, name='editar_gasto'),
+    path('gastos/eliminar/<int:id>/', views.eliminar_gasto, name='eliminar_gasto'),
 
 
 ]

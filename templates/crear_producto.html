@@ -29,7 +29,7 @@
 
         <div class="mb-3">
             <label for="categoria" class="form-label">Categoría</label>
-            <select id="categoria" name="categoria" class="form-select" required>
+            <select id="categoria" name="categoria_id" class="form-select" required>
                 {% for categoria in categorias %}
                     <option value="{{ categoria.id }}">{{ categoria.nombre }}</option>
                 {% endfor %}
@@ -41,4 +41,3 @@
     </form>
 </div>
 {% endblock %}
-
