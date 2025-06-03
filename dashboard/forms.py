@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.models import User
 from dashboard.models import Rol
+from django import forms
+from .models import Proveedor
 
 class UsuarioEmpleadoForm(forms.Form):
     username = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control'}))
@@ -12,3 +14,15 @@ class UsuarioEmpleadoForm(forms.Form):
         queryset=Rol.objects.all(),
         widget=forms.Select(attrs={'class': 'form-select'})
     )
+
+
+class ProveedorForm(forms.ModelForm):
+    class Meta:
+        model = Proveedor
+        fields = '__all__'
+        widgets = {
+            'nombre': forms.TextInput(attrs={'class': 'form-control'}),
+            'nit': forms.TextInput(attrs={'class': 'form-control'}),
+            'direccion': forms.TextInput(attrs={'class': 'form-control'}),
+            'telefono': forms.TextInput(attrs={'class': 'form-control'}),
+        }

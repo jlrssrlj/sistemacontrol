@@ -14,11 +14,14 @@ from .services.arqueo_service import ArqueoService
 from .services.listar_producto import ProductoService
 from .services.categoria_service import CategoriaService
 from .services.gastos_service import GastosService
+from .services.listar_proveedores import Proveedor
 from .forms import UsuarioEmpleadoForm
 from django.contrib.auth.models import User
 from dashboard.decorators import rol_requerido
 from django.utils.decorators import method_decorator
 from functools import wraps
+from .models import Proveedor
+from .forms import ProveedorForm
 
 
 
@@ -442,3 +445,33 @@ def eliminar_gasto(request, id):
         messages.success(request, "Gasto eliminado correctamente.")
     return redirect('listar_gastos')
 
+
+def listar_proveedores(request):
+    proveedores = Proveedor.objects.all()
+    return render(request, 'listar_proveedores.html', {'proveedores': proveedores})
+
+def crear_proveedor(request):
+    if request.method == 'POST':
+        form = ProveedorForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_proveedores')
+    else:
+        form = ProveedorForm()
+    return render(request, 'crear_proveedor.html', {'form': form})
+
+def editar_proveedor(request, pk):
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+    if request.method == 'POST':
+        form = ProveedorForm(request.POST, instance=proveedor)
+        if form.is_valid():
+            form.save()
+            return redirect('listar_proveedores')
+    else:
+        form = ProveedorForm(instance=proveedor)
+    return render(request, 'crear_proveedor.html', {'form': form})
+
+def eliminar_proveedor(request, pk):
+    proveedor = get_object_or_404(Proveedor, pk=pk)
+    proveedor.delete()
+    return redirect('listar_proveedores')

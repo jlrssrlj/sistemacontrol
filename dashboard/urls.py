@@ -29,6 +29,10 @@ urlpatterns = [
     path('listar_gastos/crear_gastos/',views.crear_gasto,name='crear_gasto'),
     path('gastos/editar/<int:id>/', views.editar_gasto, name='editar_gasto'),
     path('gastos/eliminar/<int:id>/', views.eliminar_gasto, name='eliminar_gasto'),
+    path('proveedores/', views.listar_proveedores, name='listar_proveedores'),
+    path('proveedores/nuevo/', views.crear_proveedor, name='crear_proveedor'),
+    path('proveedores/editar/<int:pk>/', views.editar_proveedor, name='editar_proveedor'),
+    path('proveedores/eliminar/<int:pk>/', views.eliminar_proveedor, name='eliminar_proveedor'),
 
 
 ]
