@@ -13,17 +13,18 @@ from .services.usuario_service import UsuarioService
 from .services.arqueo_service import ArqueoService
 from .services.listar_producto import ProductoService
 from .services.categoria_service import CategoriaService
-from .services.gastos_service import GastosService
-from .services.listar_proveedores import Proveedor
-from .services.mediopago_service import MediopagoService
-from .services.rol_service import Rolservice
+
 from .forms import UsuarioEmpleadoForm
 from django.contrib.auth.models import User
 from dashboard.decorators import rol_requerido
 from django.utils.decorators import method_decorator
 from functools import wraps
 from .models import Proveedor
-from .forms import ProveedorForm
+from .vistas.views_rol import Rol_views
+from .vistas.views_mediopago import Mediopago_views
+from .vistas.views_proveedor import Proveedores_views
+from .vistas.views_gastos import Gastos_views
+from .vistas.views_categoria import Categorias_views
 
 
 
@@ -336,223 +337,33 @@ def eliminar_producto(request, id):
 
     return render(request, 'confirmar_eliminacion_producto.html', {'producto': producto})
 
-@login_required
-def listar_categoria(request):
-    categorias = CategoriaService.listar_categoria()
-    print("Categorias en vista:", categorias)
-    return render(request, 'listar_categoria.html', {'categorias': categorias})
-
-@login_required
-def crear_categoria(request):
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        if nombre:
-            CategoriaService.crear_categoria({'nombre':nombre})
-            return redirect('listar_categoria')
-    return render(request,'crear_categoria.html')
-
-@login_required
-def editar_categoria(request, categoria_id):
-    categoria = CategoriaService.obtener_categoria(categoria_id)
-
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        if nombre:
-            
-            CategoriaService.editar_categoria(categoria_id, {'nombre': nombre})
-            return redirect('listar_categoria')
-
-    return render(request, 'editar_categoria.html', {'categoria': categoria})
-
-from django.views.decorators.http import require_POST
-
-@login_required
-@require_POST
-def eliminar_categoria(request, categoria_id):
-    try:
-        CategoriaService.eliminar_categoria(categoria_id)
-        
-    except Exception:
-        messages.error(request, 'Error al eliminar la categoría.')
-    return redirect('listar_categoria')
+Categorias_views.listar_categoria
+Categorias_views.editar_categoria
+Categorias_views.eliminar_categoria
+Categorias_views.crear_categoria
 
 
-@login_required
-def listar_gatos(request):
-    gastos = GastosService.listar_gastos()
-    return render(request, 'listar_gastos.html', {'gastos': gastos})
+Gastos_views.listar_gatos
+Gastos_views.crear_gasto
+Gastos_views.eliminar_gasto
+Gastos_views.editar_gasto
 
 
-@login_required
-def crear_gasto(request):
-    if request.method == 'POST':
-        empleado = Empleado.objects.get(user=request.user)
 
-        arqueo_abierto = Arqueo.objects.filter(empleado=empleado, fecha_fin__isnull=True).first()
-        if not arqueo_abierto:
-            messages.error(request, "Debe tener un arqueo abierto para registrar un gasto.")
-            return redirect('listar_arqueos')
-
-        data = {
-            'empleado': empleado,
-            'proveedor': Proveedor.objects.get(id=request.POST['proveedor']),
-            'concepto': request.POST['concepto'],
-            'monto': request.POST['monto'],
-            'arqueo': arqueo_abierto
-        }
-
-        GastosService.crear_gastos(data)
-        messages.success(request, "Gasto registrado exitosamente.")
-        return redirect('listar_gastos')
-
-    proveedores = Proveedor.objects.all()
-    return render(request, 'crear_gastos.html', {
-        'proveedores': proveedores
-    })
+Proveedores_views.listar_proveedores
+Proveedores_views.editar_proveedor
+Proveedores_views.crear_proveedor
+Proveedores_views.eliminar_proveedor
 
 
-@login_required
-def editar_gasto(request, id):
-    gasto = GastosService.obtener_gasto(id)
 
-    if request.method == 'POST':
-        data = {
-            'empleado': Empleado.objects.get(id=request.POST['empleado']),
-            'proveedor': Proveedor.objects.get(id=request.POST['proveedor']),
-            'concepto': request.POST['concepto'],
-            'monto': request.POST['monto'],
-            'arqueo': Arqueo.objects.get(id=request.POST['arqueo']),
-        }
-        GastosService.editar_gasto(id, data)
-        messages.success(request, "Gasto editado correctamente.")
-        return redirect('listar_gastos')
-
-    empleados = Empleado.objects.all()
-    proveedores = Proveedor.objects.all()
-    arqueos = Arqueo.objects.all()
-
-    return render(request, 'editar_gasto.html', {
-        'gasto': gasto,
-        'empleados': empleados,
-        'proveedores': proveedores,
-        'arqueos': arqueos,
-    })
-
-
-@login_required
-def eliminar_gasto(request, id):
-    if request.method == 'POST':
-        GastosService.eliminar_gasto(id)
-        messages.success(request, "Gasto eliminado correctamente.")
-    return redirect('listar_gastos')
-
-
-def listar_proveedores(request):
-    proveedores = Proveedor.objects.all()
-    return render(request, 'listar_proveedores.html', {'proveedores': proveedores})
-
-def crear_proveedor(request):
-    if request.method == 'POST':
-        form = ProveedorForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect('listar_proveedores')
-    else:
-        form = ProveedorForm()
-    return render(request, 'crear_proveedor.html', {'form': form})
-
-def editar_proveedor(request, pk):
-    proveedor = get_object_or_404(Proveedor, pk=pk)
-    if request.method == 'POST':
-        form = ProveedorForm(request.POST, instance=proveedor)
-        if form.is_valid():
-            form.save()
-            return redirect('listar_proveedores')
-    else:
-        form = ProveedorForm(instance=proveedor)
-    return render(request, 'crear_proveedor.html', {'form': form})
-
-def eliminar_proveedor(request, pk):
-    proveedor = get_object_or_404(Proveedor, pk=pk)
-    proveedor.delete()
-    return redirect('listar_proveedores')
-
-def listar_mediopago(request):
-    pagos = MediopagoService.listar_mediopago()
-    return render(request, 'mediopago/listar_mediopago.html',{'pagos': pagos})
-
-def crear_mediopago(request):
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        if nombre:
-            MediopagoService.crear_mediopago({'nombre': nombre})
-            return redirect('listar_medio_pago')
-        else:
-            return render(request, 'mediopago/crear_mediopago.html',{'error': 'El nombre es obligatorio'})
-    
-    return render(request, 'mediopago/crear_mediopago.html')
-
-
-def editar_mediopago(request, id):
-    pago = get_object_or_404(MediopagoService.listar_mediopago(), id=id)
-
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        if nombre:
-            MediopagoService.editar_mediopago(id, {'nombre': nombre})
-            return redirect('listar_medio_pago')  
-        else:
-            return render(request, 'mediopago/editar_mediopago.html', {
-                'pago': pago,
-                'error': 'El nombre es obligatorio'
-            })
-
-    return render(request, 'mediopago/editar_mediopago.html', {'pago': pago})
-
-def eliminar_mediopago(request,id):
-    if request.method == 'POST':
-        MediopagoService.eliminar_mediopago(id)
-        return redirect('listar_medio_pago')
-    pago = get_object_or_404(MediopagoService.listar_mediopago(), id=id)
-    return render(request, 'mediopago/eliminar_mediopago.html',{'pago':pago})
-
-def listar_rol(request):
-    rol = Rolservice.listar_rol()
-    return render(request, 'rol/listar_rol.html',{'rol': rol})
-
-def crear_rol(request):
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        if nombre:
-            Rolservice.crear_rol({'nombre': nombre})
-            return redirect('listar_rol')
-        else:
-            return render(request, 'rol/crear_rol.html',{'error': 'El nombre es obligatorio'})
-    
-    return render(request, 'rol/crear_rol.html')
-
-
-def editar_rol(request, id):
-    rol = get_object_or_404(Rolservice.listar_rol(), id=id)
-
-    if request.method == 'POST':
-        nombre = request.POST.get('nombre')
-        if nombre:
-            Rolservice.editar_rol(id, {'nombre': nombre})
-            return redirect('listar_rol')  
-        else:
-            return render(request, 'rol/editar_rol.html', {
-                'rol': rol,
-                'error': 'El nombre es obligatorio'
-            })
-
-    return render(request, 'rol/editar_rol.html', {'rol': rol})
-
-def eliminar_rol(request,id):
-    if request.method == 'POST':
-        Rolservice.eliminar_rol(id)
-        return redirect('listar_rol')
-    rol = get_object_or_404(Rolservice.listar_rol(), id=id)
-    return render(request, 'rol/eliminar_rol.html',{'rol':rol})
-
+Mediopago_views.listar_mediopago
+Mediopago_views.editar_mediopago
+Mediopago_views.crear_mediopago
+Mediopago_views.eliminar_mediopago
+ 
+Rol_views.listar_rol
+Rol_views.crear_rol
+Rol_views.editar_rol
+Rol_views.editar_rol
 
