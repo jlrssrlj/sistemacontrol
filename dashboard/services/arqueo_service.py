@@ -22,14 +22,11 @@ class ArqueoService:                                        # mediante la creacc
         arqueo.fecha_fin = timezone.now()
         arqueo.monto_final = Decimal(monto_final)
 
-        # Sumar las ventas asociadas al arqueo
+        
         total_ventas = Venta.objects.filter(arqueo=arqueo).aggregate(total=Sum('total'))['total'] or Decimal('0')
-        # Sumar los gastos asociados al arqueo
+        
         total_gastos = Gasto.objects.filter(arqueo=arqueo).aggregate(total=Sum('monto'))['total'] or Decimal('0')
-
-        # Calcular el total esperado en caja
         calculado = arqueo.monto_inicial + total_ventas - total_gastos
-        # Diferencia entre lo calculado y lo contado (monto_final)
         arqueo.diferencia = calculado - arqueo.monto_final
 
         arqueo.save()

@@ -1,43 +1,42 @@
-from dashboard.models import Gastos, Empleado, Proveedor, Arqueo
+from dashboard.models import Gasto, Empleado, Proveedor, Arqueo
 from django.shortcuts import get_object_or_404
+from django.utils import timezone 
 
 class GastosService:
 
     @staticmethod
-    def crear_gastos(data):
-        empleado = get_object_or_404(Empleado, id=data['empleado_id'])
-        proveedor = get_object_or_404(Proveedor, id=data['proveedor_id'])
-        arqueo_id = data.get('arqueo_id')
-        arqueo = Arqueo.objects.get(id=arqueo_id) if arqueo_id else None
+    def listar_gastos():
+        return Gasto.objects.all()
+    
+    @staticmethod
+    def obtener_gasto(id):
+        return get_object_or_404(Gasto, id=id)
 
-        gastos = Gastos.objects.create(
-            empleado=empleado,
-            proveedor=proveedor,
+    @staticmethod
+    def crear_gastos(data):
+        gasto = Gasto.objects.create(
+            empleado=data['empleado'],
+            proveedor=data['proveedor'],
             concepto=data['concepto'],
             monto=data['monto'],
-            arqueo=arqueo
+            fecha=timezone.now(),
+            arqueo=data['arqueo']
         )
-        return gastos
-
+        return gasto
+    
     @staticmethod
-    def actualizar_gasto(gasto_id, data):
-        gastos = get_object_or_404(Gastos, id=gastos_id)
-        gastos.empleado = get_object_or_404(Empleado, id=data['empleado_id'])
-        gastos.proveedor = get_object_or_404(Proveedor, id=data['proveedor_id'])
-        gastos.concepto = data['concepto']
-        gastos.monto = data['monto']
-
-        arqueo_id = data.get('arqueo_id')
-        gastos.arqueo = Arqueo.objects.get(id=arqueo_id) if arqueo_id else None
-
+    def editar_gasto(id, data):
+        gasto = get_object_or_404(Gasto, id=id)
+        gasto.empleado = data['empleado']
+        gasto.proveedor = data['proveedor']
+        gasto.concepto = data['concepto']
+        gasto.monto = data['monto']
+        gasto.arqueo = data['arqueo']
         gasto.save()
         return gasto
-
+    
     @staticmethod
-    def eliminar_gastos(id):
-        gastos = get_object_or_404(Gastos, id=id)
-        gastos.delete()
-
-    @staticmethod
-    def listar_gastos():
-        return Gastos.objects.all()
+    def eliminar_gasto(id):
+        gasto = get_object_or_404(Gasto, id=id)
+        gasto.delete()
+        return True
