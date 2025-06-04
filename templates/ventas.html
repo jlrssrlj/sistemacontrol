@@ -85,7 +85,7 @@
                         <strong>Total a pagar:</strong>
                         <span id="total-pagar">$0.00</span>
                     </div>
-                    <button type="submit" class="btn btn-success mt-3 w-100">Finalizar Venta</button>
+                    <button type="submit" class="btn btn-success mt-3 w-100" id="btn-finalizar" disabled>Finalizar Venta</button>
                 </form>
             </section>
         </div>
@@ -96,14 +96,17 @@
 document.addEventListener('DOMContentLoaded', () => {
     const productosLista = document.getElementById('productos-lista');
     const totalPagar = document.getElementById('total-pagar');
+    const btnFinalizar = document.getElementById('btn-finalizar');
 
     function actualizarTotal() {
         let total = 0;
-        productosLista.querySelectorAll('.item-producto').forEach(item => {
+        const items = productosLista.querySelectorAll('.item-producto');
+        items.forEach(item => {
             const subtotal = parseFloat(item.dataset.subtotal);
             total += subtotal;
         });
         totalPagar.textContent = '$' + total.toFixed(2);
+        btnFinalizar.disabled = items.length === 0;
     }
 
     function crearItemProducto(id, nombre, precio, stock) {
@@ -161,7 +164,12 @@ document.addEventListener('DOMContentLoaded', () => {
             actualizarSubtotal();
         });
 
-        inputCantidad.addEventListener('change', actualizarSubtotal);
+        inputCantidad.addEventListener('change', () => {
+            if (isNaN(inputCantidad.value) || inputCantidad.value === '') {
+                inputCantidad.value = 1;
+            }
+            actualizarSubtotal();
+        });
 
         li.querySelector('.btn-eliminar').addEventListener('click', () => {
             li.remove();

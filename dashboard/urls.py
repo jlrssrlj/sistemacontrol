@@ -33,6 +33,13 @@ urlpatterns = [
     path('proveedores/nuevo/', views.crear_proveedor, name='crear_proveedor'),
     path('proveedores/editar/<int:pk>/', views.editar_proveedor, name='editar_proveedor'),
     path('proveedores/eliminar/<int:pk>/', views.eliminar_proveedor, name='eliminar_proveedor'),
-
+    path('configuracion/medio_de_pago/', views.listar_mediopago, name='listar_medio_pago'),
+    path('medio_de_pago/crear/', views.crear_mediopago, name='crear_mediopago'),
+    path('medio_de_pago/editar/<int:id>/', views.editar_mediopago,name='editar_pago'),
+    path('medio_de_pago/eliminar/<int:id>', views.eliminar_mediopago, name='eliminar_mediopago'),
+    path('configuracion/rol/', views.listar_rol, name='listar_rol'),
+    path('rol/crear/', views.crear_rol, name='crear_rol'),
+    path('rol/editar/<int:id>/', views.editar_rol,name='editar_rol'),
+    path('rol/eliminar/<int:id>', views.eliminar_rol, name='eliminar_rol')
 
 ]

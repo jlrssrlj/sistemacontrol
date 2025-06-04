@@ -57,6 +57,13 @@ class Cliente(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+
+class MedioPago(models.Model):
+    nombre = models.CharField(max_length=50)
+
+    def __str__(self):
+        return self.nombre
 
 # 7. Venta
 class Venta(models.Model):
@@ -65,6 +72,7 @@ class Venta(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.SET_NULL, null=True, blank=True)
     fecha = models.DateTimeField(auto_now_add=True)
     total = models.DecimalField(max_digits=10, decimal_places=2)
+    medio_pago = models.ForeignKey(MedioPago, on_delete=models.SET_NULL, null=True, blank=True)
 
     def __str__(self):
         return f"Venta #{self.id} - {self.fecha}"
@@ -104,9 +112,4 @@ class Gasto(models.Model):
     def __str__(self):
         return f"{self.concepto} - {self.monto}"
     
-class MedioPago(models.Model):
-    nombre = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.nombre
 

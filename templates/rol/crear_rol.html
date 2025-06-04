@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block title %}{{ titulo }} Crear cargos{% endblock %}
+
+{% block content %}
+<h2>{{ titulo }} Cargos</h2>
+
+<form method="post" novalidate>
+    {% csrf_token %}
+    <div class="mb-3">
+        <label for="nombre" class="form-label">Nombre</label>
+        <input type="text" class="form-control" id="nombre" name="nombre" value="{{ categoria.nombre|default:'' }}" required />
+    </div>
+    <button type="submit" class="btn btn-success">Guardar</button>
+    <a href="{% url 'listar_rol' %}" class="btn btn-secondary">Cancelar</a>
+</form>
+{% endblock %}

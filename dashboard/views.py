@@ -15,6 +15,8 @@ from .services.listar_producto import ProductoService
 from .services.categoria_service import CategoriaService
 from .services.gastos_service import GastosService
 from .services.listar_proveedores import Proveedor
+from .services.mediopago_service import MediopagoService
+from .services.rol_service import Rolservice
 from .forms import UsuarioEmpleadoForm
 from django.contrib.auth.models import User
 from dashboard.decorators import rol_requerido
@@ -142,17 +144,14 @@ def crear_venta(request):
         medio_pago_id = request.POST.get('medio_pago')
         if not medio_pago_id:
             messages.error(request, "Por favor selecciona un medio de pago.")
-            return render(request, 'tu_template.html', {'productos': productos, 'medios_pago': medios_pago})
+            return render(request, 'ventas.html', {'productos': productos, 'medios_pago': medios_pago})
 
-        # Aquí puedes obtener el objeto MedioPago si lo necesitas
-        medio_pago = None
         try:
             medio_pago = MedioPago.objects.get(id=medio_pago_id)
         except MedioPago.DoesNotExist:
             messages.error(request, "Medio de pago inválido.")
-            return render(request, 'tu_template.html', {'productos': productos, 'medios_pago': medios_pago})
+            return render(request, 'ventas.html', {'productos': productos, 'medios_pago': medios_pago})
 
-        
         productos_venta = []
         total = 0
         for key in request.POST.keys():
@@ -164,26 +163,26 @@ def crear_venta(request):
                     producto = Producto.objects.get(id=prod_id)
                     if cantidad > producto.stock:
                         messages.error(request, f"No hay suficiente stock para {producto.nombre}.")
-                        return render(request, 'tu_template.html', {'productos': productos, 'medios_pago': medios_pago})
+                        return render(request, 'ventas.html', {'productos': productos, 'medios_pago': medios_pago})
                     subtotal = producto.precio * cantidad
                     total += subtotal
                     productos_venta.append({'producto': producto, 'cantidad': cantidad, 'subtotal': subtotal})
                 except (Producto.DoesNotExist, ValueError):
                     messages.error(request, "Datos de producto inválidos.")
-                    return render(request, 'tu_template.html', {'productos': productos, 'medios_pago': medios_pago})
+                    return render(request, 'ventas.html', {'productos': productos, 'medios_pago': medios_pago})
 
         if not productos_venta:
             messages.error(request, "No has agregado productos a la venta.")
-            return render(request, 'tu_template.html', {'productos': productos, 'medios_pago': medios_pago})
+            return render(request, 'ventas.html', {'productos': productos, 'medios_pago': medios_pago})
 
-        
         empleado = Empleado.objects.get(user=request.user)
 
+        # Crear la venta con medio de pago
         venta = Venta.objects.create(
             empleado=empleado,
             total=total,
+            medio_pago=medio_pago,  # Aquí se guarda correctamente
             fecha=timezone.now(),
-            
         )
 
         for item in productos_venta:
@@ -198,19 +197,21 @@ def crear_venta(request):
             item['producto'].save()
 
         messages.success(request, f"Venta registrada exitosamente. Total: ${total:.2f}")
-        return redirect('ventas')  
+        return redirect('ventas')  # Asegúrate de que esta URL exista
 
-    # GET
+    # Si es GET
     return render(request, 'ventas.html', {'productos': productos, 'medios_pago': medios_pago})
 
 @method_decorator(rol_requerido('admin'), name='dispatch')
-class historial_ventas(LoginRequiredMixin,ListView):
-    template_name = 'historial_ventas.html'  # Qué plantilla usar para mostrar la lista
-    context_object_name = 'ventas'                # Cómo se llamará la variable que contiene la lista en el template
-    paginate_by = 10                              # Número de items por página (paginación)
+class historial_ventas(LoginRequiredMixin, ListView):
+    template_name = 'historial_ventas.html'
+    context_object_name = 'ventas'
+    paginate_by = 10
 
     def get_queryset(self):
-        return listar_ventas()
+        return Venta.objects.select_related('empleado__user', 'cliente', 'medio_pago') \
+                            .prefetch_related('detalles__producto') \
+                            .order_by('-fecha')
     
 def producto_list(request):
     return render(request,'listar_producto.html')
@@ -237,7 +238,7 @@ def crear_arqueo(request):
     return render(request,'crear_arqueo.html')
 
 @login_required
-@solo_admin
+
 def cerrar_arqueo(request, id):
     arqueo = ArqueoService.obtener_arqueo(id)
 
@@ -475,3 +476,83 @@ def eliminar_proveedor(request, pk):
     proveedor = get_object_or_404(Proveedor, pk=pk)
     proveedor.delete()
     return redirect('listar_proveedores')
+
+def listar_mediopago(request):
+    pagos = MediopagoService.listar_mediopago()
+    return render(request, 'mediopago/listar_mediopago.html',{'pagos': pagos})
+
+def crear_mediopago(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        if nombre:
+            MediopagoService.crear_mediopago({'nombre': nombre})
+            return redirect('listar_medio_pago')
+        else:
+            return render(request, 'mediopago/crear_mediopago.html',{'error': 'El nombre es obligatorio'})
+    
+    return render(request, 'mediopago/crear_mediopago.html')
+
+
+def editar_mediopago(request, id):
+    pago = get_object_or_404(MediopagoService.listar_mediopago(), id=id)
+
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        if nombre:
+            MediopagoService.editar_mediopago(id, {'nombre': nombre})
+            return redirect('listar_medio_pago')  
+        else:
+            return render(request, 'mediopago/editar_mediopago.html', {
+                'pago': pago,
+                'error': 'El nombre es obligatorio'
+            })
+
+    return render(request, 'mediopago/editar_mediopago.html', {'pago': pago})
+
+def eliminar_mediopago(request,id):
+    if request.method == 'POST':
+        MediopagoService.eliminar_mediopago(id)
+        return redirect('listar_medio_pago')
+    pago = get_object_or_404(MediopagoService.listar_mediopago(), id=id)
+    return render(request, 'mediopago/eliminar_mediopago.html',{'pago':pago})
+
+def listar_rol(request):
+    rol = Rolservice.listar_rol()
+    return render(request, 'rol/listar_rol.html',{'rol': rol})
+
+def crear_rol(request):
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        if nombre:
+            Rolservice.crear_rol({'nombre': nombre})
+            return redirect('listar_rol')
+        else:
+            return render(request, 'rol/crear_rol.html',{'error': 'El nombre es obligatorio'})
+    
+    return render(request, 'rol/crear_rol.html')
+
+
+def editar_rol(request, id):
+    rol = get_object_or_404(Rolservice.listar_rol(), id=id)
+
+    if request.method == 'POST':
+        nombre = request.POST.get('nombre')
+        if nombre:
+            Rolservice.editar_rol(id, {'nombre': nombre})
+            return redirect('listar_rol')  
+        else:
+            return render(request, 'rol/editar_rol.html', {
+                'rol': rol,
+                'error': 'El nombre es obligatorio'
+            })
+
+    return render(request, 'rol/editar_rol.html', {'rol': rol})
+
+def eliminar_rol(request,id):
+    if request.method == 'POST':
+        Rolservice.eliminar_rol(id)
+        return redirect('listar_rol')
+    rol = get_object_or_404(Rolservice.listar_rol(), id=id)
+    return render(request, 'rol/eliminar_rol.html',{'rol':rol})
+
+
