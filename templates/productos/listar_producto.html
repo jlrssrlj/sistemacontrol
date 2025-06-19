@@ -19,6 +19,7 @@
                     <th class="text-center">Precio</th>
                     <th class="text-center">Stock</th>
                     <th class="text-center">Categoría</th>
+                    <th class="text-center">Proveedor</th>
                     <th class="text-center">Acciones</th>
                   
                 </tr>
@@ -31,6 +32,7 @@
                     <td>${{ producto.precio }}</td>
                     <td>{{ producto.stock }}</td>
                     <td>{{ producto.categoria }}</td>
+                    <td>{{ producto.proveedor }}</td>
                     <td class="text-center">
                         <a href="{% url 'editar_producto' producto.id %}" class="btn btn-sm btn-outline-warning me-1">
                             <i class="bi bi-pencil-square"></i> Editar

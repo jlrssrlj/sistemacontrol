@@ -9,7 +9,7 @@ from ..services.listar_proveedores import ProveedorService
 class Proveedores_views:
     def listar_proveedores(request):
         proveedores = Proveedor.objects.all()
-        return render(request, 'listar_proveedores.html', {'proveedores': proveedores})
+        return render(request, 'proveedor/listar_proveedores.html', {'proveedores': proveedores})
 
     def crear_proveedor(request):
         if request.method == 'POST':
@@ -19,7 +19,7 @@ class Proveedores_views:
                 return redirect('listar_proveedores')
         else:
             form = ProveedorForm()
-        return render(request, 'crear_proveedor.html', {'form': form})
+        return render(request, 'proveedor/crear_proveedor.html', {'form': form})
 
     def editar_proveedor(request, pk):
         proveedor = get_object_or_404(Proveedor, pk=pk)
@@ -30,7 +30,7 @@ class Proveedores_views:
                 return redirect('listar_proveedores')
         else:
             form = ProveedorForm(instance=proveedor)
-        return render(request, 'crear_proveedor.html', {'form': form})
+        return render(request, 'proveedor/crear_proveedor.html', {'form': form})
 
     def eliminar_proveedor(request, pk):
         proveedor = get_object_or_404(Proveedor, pk=pk)

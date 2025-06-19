@@ -43,6 +43,20 @@
             </select>
         </div>
 
+        <div class="mb-3">
+            <label for="proveedor" class="form-label">Proveedor</label>
+            <select id="proveedor" name="proveedor_id" class="form-select" required>
+                <option value="">Seleccione un proveedor</option>
+                {% for proveedor in proveedores %}
+                    <option value="{{ proveedor.id }}"
+                        {% if producto.proveedor and producto.proveedor.id == proveedor.id %}selected{% endif %}>
+                        {{ proveedor.nombre }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+
         <button type="submit" class="btn btn-primary">Guardar Cambios</button>
         <a href="{% url 'listar_producto' %}" class="btn btn-secondary">Cancelar</a>
     </form>

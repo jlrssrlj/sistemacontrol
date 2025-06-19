@@ -8,26 +8,37 @@ class Categoria(models.Model):
 
     def __str__(self):
         return self.nombre
+    
+# 2. Proveedor
+class Proveedor(models.Model):
+    nombre = models.CharField(max_length=100)
+    nit = models.CharField(max_length=50)
+    direccion = models.CharField(max_length=100)
+    telefono = models.CharField(max_length=50)
 
-# 2. Producto
+    def __str__(self):
+        return self.nombre    
+
+# 3. Producto
 class Producto(models.Model):
     nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True)
     precio = models.DecimalField(max_digits=10, decimal_places=2)
     stock = models.IntegerField()
     categoria = models.ForeignKey(Categoria, on_delete=models.SET_NULL, null=True)
+    proveedor = models.ForeignKey(Proveedor, on_delete=models.SET_NULL, null=True)
 
     def __str__(self):
         return self.nombre
 
-# 3. Rol de Empleado
+# 4. Rol de Empleado
 class Rol(models.Model):
     nombre = models.CharField(max_length=50)
 
     def __str__(self):
         return self.nombre
 
-# 4. Empleado (Usuario extendido)
+# 5. Empleado (Usuario extendido)
 class Empleado(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     rol = models.ForeignKey(Rol, on_delete=models.SET_NULL, null=True)
@@ -36,7 +47,7 @@ class Empleado(models.Model):
     def __str__(self):
         return self.user.get_full_name()
 
-# 5. Arqueo de Caja
+# 6. Arqueo de Caja
 class Arqueo(models.Model):  #Se crea una clase llamado arqueo que representa una tabla de la base de datos, cada vez que se cree un arqueo nuevo se guardara la informacion en dicha tabla.
     empleado = models.ForeignKey(Empleado, on_delete=models.SET_NULL, null=True)  #almacena el nombre del empleado que realizo el arqueo medianmte una relacion que se conecta con el modelo empleado.
     fecha_inicio = models.DateTimeField()   #guarda la informacion de cuando se realizo el arqueo, fecha y hora.
@@ -48,7 +59,7 @@ class Arqueo(models.Model):  #Se crea una clase llamado arqueo que representa un
     def __str__(self):
         return f"Arqueo {self.id} - {self.fecha_inicio.date()}" #Muestra la informacion del arqueo.
 
-# 6. Cliente
+# 7. Cliente
 class Cliente(models.Model):
     nombre = models.CharField(max_length=50)
     identificacion = models.CharField(max_length=50)
@@ -65,7 +76,7 @@ class MedioPago(models.Model):
     def __str__(self):
         return self.nombre
 
-# 7. Venta
+# 8. Venta
 class Venta(models.Model):
     empleado = models.ForeignKey(Empleado, on_delete=models.SET_NULL, null=True)  
     arqueo = models.ForeignKey(Arqueo, on_delete=models.SET_NULL, null=True)  
@@ -77,7 +88,7 @@ class Venta(models.Model):
     def __str__(self):
         return f"Venta #{self.id} - {self.fecha}"
 
-# 8. Detalle de Venta
+# 9. Detalle de Venta
 class DetalleVenta(models.Model):
     venta = models.ForeignKey(Venta, related_name='detalles', on_delete=models.CASCADE)
     producto = models.ForeignKey(Producto, on_delete=models.SET_NULL, null=True)
@@ -90,15 +101,7 @@ class DetalleVenta(models.Model):
     def __str__(self):
         return f"{self.cantidad} x {self.producto.nombre}"
 
-# 9. Proveedor
-class Proveedor(models.Model):
-    nombre = models.CharField(max_length=100)
-    nit = models.CharField(max_length=50)
-    direccion = models.CharField(max_length=100)
-    telefono = models.CharField(max_length=50)
 
-    def __str__(self):
-        return self.nombre
 
 # 10. Gasto
 class Gasto(models.Model):

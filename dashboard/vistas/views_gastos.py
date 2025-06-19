@@ -10,7 +10,7 @@ class Gastos_views:
     @login_required
     def listar_gatos(request):
         gastos = GastosService.listar_gastos()
-        return render(request, 'listar_gastos.html', {'gastos': gastos})
+        return render(request, 'gastos/listar_gastos.html', {'gastos': gastos})
 
 
     @login_required
@@ -36,7 +36,7 @@ class Gastos_views:
             return redirect('listar_gastos')
 
         proveedores = Proveedor.objects.all()
-        return render(request, 'crear_gastos.html', {
+        return render(request, 'gastos/crear_gastos.html', {
             'proveedores': proveedores
         })
 
@@ -61,7 +61,7 @@ class Gastos_views:
         proveedores = Proveedor.objects.all()
         arqueos = Arqueo.objects.all()
 
-        return render(request, 'editar_gasto.html', {
+        return render(request, 'gastos/editar_gasto.html', {
             'gasto': gasto,
             'empleados': empleados,
             'proveedores': proveedores,

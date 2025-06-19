@@ -1,5 +1,4 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.db.models import Sum
 from django.views.decorators.http import require_http_methods
 from django.contrib.auth import authenticate, login, logout
 from django.contrib import auth, messages
@@ -7,24 +6,21 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.utils import timezone
 from django.views.generic import ListView
 from django.contrib.auth.mixins import LoginRequiredMixin
-from dashboard.models import Empleado,Gasto, Proveedor, Arqueo,Producto, Venta, DetalleVenta, MedioPago,Rol, Categoria
+from dashboard.models import Empleado,Producto, Venta, DetalleVenta, MedioPago,Rol
 from .services.listar_ventas import listar_ventas
 from .services.usuario_service import UsuarioService
-from .services.arqueo_service import ArqueoService
-from .services.listar_producto import ProductoService
-from .services.categoria_service import CategoriaService
-
 from .forms import UsuarioEmpleadoForm
 from django.contrib.auth.models import User
 from dashboard.decorators import rol_requerido
 from django.utils.decorators import method_decorator
 from functools import wraps
-from .models import Proveedor
 from .vistas.views_rol import Rol_views
 from .vistas.views_mediopago import Mediopago_views
 from .vistas.views_proveedor import Proveedores_views
 from .vistas.views_gastos import Gastos_views
 from .vistas.views_categoria import Categorias_views
+from .vistas.views_arqueo import Arqueo_views
+from .vistas.views_productos import Producto_views
 
 
 
@@ -135,11 +131,15 @@ def logout_view(request):
 
 
 
+from django.utils import timezone
+from dashboard.models import Empleado, Venta, DetalleVenta, Producto, MedioPago, Arqueo
+from django.contrib import messages
+
 @login_required
 @rol_requerido('admin', 'cajero')
 def crear_venta(request):
     productos = Producto.objects.filter(stock__gt=0).order_by('nombre')
-    medios_pago = MedioPago.objects.all()  # Carga los medios de pago desde BD
+    medios_pago = MedioPago.objects.all()
 
     if request.method == 'POST':
         medio_pago_id = request.POST.get('medio_pago')
@@ -178,11 +178,18 @@ def crear_venta(request):
 
         empleado = Empleado.objects.get(user=request.user)
 
-        # Crear la venta con medio de pago
+        # Obtener arqueo abierto del empleado
+        arqueo_abierto = Arqueo.objects.filter(empleado=empleado, fecha_fin__isnull=True).first()
+        if not arqueo_abierto:
+            messages.error(request, "No tienes un arqueo abierto. Debes abrir un arqueo antes de registrar ventas.")
+            return render(request, 'ventas.html', {'productos': productos, 'medios_pago': medios_pago})
+
+        # Crear la venta con arqueo y medio de pago
         venta = Venta.objects.create(
             empleado=empleado,
+            arqueo=arqueo_abierto,
             total=total,
-            medio_pago=medio_pago,  # Aquí se guarda correctamente
+            medio_pago=medio_pago,
             fecha=timezone.now(),
         )
 
@@ -198,10 +205,10 @@ def crear_venta(request):
             item['producto'].save()
 
         messages.success(request, f"Venta registrada exitosamente. Total: ${total:.2f}")
-        return redirect('ventas')  # Asegúrate de que esta URL exista
+        return redirect('ventas')
 
-    # Si es GET
     return render(request, 'ventas.html', {'productos': productos, 'medios_pago': medios_pago})
+
 
 @method_decorator(rol_requerido('admin'), name='dispatch')
 class historial_ventas(LoginRequiredMixin, ListView):
@@ -214,128 +221,12 @@ class historial_ventas(LoginRequiredMixin, ListView):
                             .prefetch_related('detalles__producto') \
                             .order_by('-fecha')
     
-def producto_list(request):
-    return render(request,'listar_producto.html')
-
-@login_required
-def crear_arqueo(request):
-    if request.method == 'POST':
-        monto_inicial = request.POST.get('monto_inicial')
-        
-        try:
-            monto_inicial = float(monto_inicial)
-        except ValueError:
-            return render(request,'crear_arqueo.html')
-        
-        empleado = request.user.empleado
-
-        data ={
-            'monto_inicial': monto_inicial,
-            'empleado': empleado
-        }
-
-        ArqueoService.crear_arqueo(data)
-        return redirect('listar_arqueos')
-    return render(request,'crear_arqueo.html')
-
-@login_required
-
-def cerrar_arqueo(request, id):
-    arqueo = ArqueoService.obtener_arqueo(id)
-
-    if request.method == 'POST':
-        monto_final = request.POST.get('monto_final')
-        try:
-            monto_final = float(monto_final)
-            ArqueoService.cerrar_arqueo(id, monto_final)
-            return redirect('listar_arqueos')  
-        except ValueError:
-            return render(request, 'cerrar_arqueo.html', {
-                'arqueo': arqueo,
-                'error': 'El monto final debe ser un número válido.'
-            })
-
-    return render(request, 'cerrar_arqueo.html', {
-        'arqueo': arqueo
-    })
 
 
-@login_required
-def listar_arqueo(request):
-    arqueos = ArqueoService.listar_arqueos()
-    context = {
-        'arqueos': arqueos,
-    }
-    return render(request,'listar_arqueos.html',context)
-
-@login_required
-def eliminar_arqueo(request, id):
-    arqueo = ArqueoService.eliminar_arqueo(id)
-
-    if request.method == 'POST':
-        ArqueoService.eliminar_arqueo(id)
-        return redirect('listar_arqueo')
-    return render(request,'confirmacion_eliminacion_arqueo.html', {'arqueo':arqueo})
-
-@login_required
-def crear_producto(request):
-    if request.method == 'POST':
-        categoria_id = request.POST.get('categoria_id')
-        print(f"Categoria ID recibida: {categoria_id}")  # <-- Depuración
-
-        data = {
-            'nombre': request.POST.get('nombre'),
-            'descripcion': request.POST.get('descripcion'),
-            'precio': request.POST.get('precio'),
-            'stock': request.POST.get('stock'),
-            'categoria_id': categoria_id
-        }
-
-        ProductoService.crear_producto(data)
-        messages.success(request, 'Producto creado correctamente.')
-        return redirect('listar_producto')
-
-    categorias = Categoria.objects.all()
-    return render(request, 'crear_producto.html', {'categorias': categorias})
-
-
-
-@login_required
-def listar_producto(request):
-    producto = ProductoService.listar_producto()
-    return render(request, 'listar_producto.html', {'producto': producto})
-
-
-@login_required
-def editar_producto(request, id):
-    producto = get_object_or_404(Producto, id=id)
-
-    if request.method == 'POST':
-        data = {
-            'nombre': request.POST.get('nombre'),
-            'descripcion': request.POST.get('descripcion'),
-            'precio': request.POST.get('precio'),
-            'stock': request.POST.get('stock'),
-            'categoria_id': request.POST.get('categoria_id')
-        }
-        ProductoService.actualizar_producto(producto.id, data)
-        messages.success(request, 'Producto actualizado correctamente.')
-        return redirect('listar_producto')
-
-    categorias = Categoria.objects.all()
-    return render(request, 'editar_producto.html', {'producto': producto, 'categorias': categorias})
-
-
-@login_required
-def eliminar_producto(request, id):
-    producto = get_object_or_404(Producto, id=id)
-
-    if request.method == 'POST':
-        ProductoService.eliminar_producto(id)
-        messages.success(request, 'Producto eliminado correctamente.')
-        return redirect('listar_producto')
-
-    return render(request, 'confirmar_eliminacion_producto.html', {'producto': producto})
+Arqueo_views.listar_arqueo
+Arqueo_views.eliminar_arqueo
+Arqueo_views.crear_arqueo
+Arqueo_views.cerrar_arqueo
 
 Categorias_views.listar_categoria
 Categorias_views.editar_categoria
